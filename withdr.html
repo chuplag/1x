@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1xPartners - Withdrawal Problem</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f1117; --sidebar-bg: #161a24; --card-bg: #1a1f2e; --border: #252b3b;
+    --accent: #1a73e8; --accent2: #00c4ff; --yellow: #f0b429; --green: #22c55e;
+    --red: #ef4444; --orange: #ff6b1a; --text: #e2e8f0; --muted: #7a8599;
+  }
+  body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; font-size: 14px; }
+
+  /* SIDEBAR */
+  .sidebar { width: 215px; flex-shrink: 0; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding-bottom: 24px; overflow-y: auto; }
+  .logo { padding: 18px 20px; border-bottom: 1px solid var(--border); margin-bottom: 6px; }
+  .logo span { font-family: 'Exo 2', sans-serif; font-weight: 800; font-size: 20px; color: var(--orange); letter-spacing: 1px; }
+  .logo span em { color: var(--text); font-style: normal; }
+  .nav-section { padding: 4px 0 8px; }
+  .nav-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; color: var(--muted); padding: 10px 20px 5px; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; color: var(--muted); cursor: pointer; transition: all .18s; border-left: 3px solid transparent; font-size: 13px; text-decoration: none; }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,.04); }
+  .nav-item.active { color: var(--red); background: rgba(239,68,68,.07); border-left-color: var(--red); }
+  .nav-item.deposit-link { color: var(--green); }
+  .nav-item.withdraw-link { color: var(--yellow); }
+  .nav-item.problem-link { color: var(--red); }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .nav-badge { margin-left: auto; background: var(--red); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; font-family: 'Exo 2', sans-serif; }
+
+  /* MAIN */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .topbar { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .topbar-title { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 17px; display: flex; align-items: center; gap: 10px; color: var(--red); }
+  .topbar-right { display: flex; align-items: center; gap: 14px; }
+  .aff-id { font-size: 12.5px; color: var(--muted); }
+  .aff-id strong { color: var(--accent2); }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 5px; font-size: 12.5px; font-weight: 500; cursor: pointer; border: none; font-family: inherit; transition: opacity .15s; }
+  .btn:hover { opacity: .85; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-danger { background: var(--red); color: #fff; }
+
+  .content { padding: 24px; flex: 1; }
+
+  /* ALERT BANNER */
+  .alert-banner { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); border-radius: 8px; padding: 14px 18px; margin-bottom: 22px; display: flex; align-items: center; gap: 12px; }
+  .alert-banner svg { color: var(--red); flex-shrink: 0; }
+  .alert-text { font-size: 13.5px; color: #fca5a5; }
+  .alert-text strong { color: var(--red); font-family: 'Exo 2', sans-serif; }
+
+  /* SEARCH BOX */
+  .search-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 22px 24px; margin-bottom: 24px; }
+  .search-title { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 15px; margin-bottom: 5px; color: var(--text); }
+  .search-subtitle { font-size: 12.5px; color: var(--muted); margin-bottom: 16px; }
+  .search-row { display: flex; gap: 10px; }
+  .search-input-wrap { flex: 1; position: relative; }
+  .search-input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 16px 10px 42px; border-radius: 6px; font-family: inherit; font-size: 14px; outline: none; transition: border-color .18s; }
+  .search-input:focus { border-color: var(--accent2); }
+  .search-input::placeholder { color: var(--muted); }
+  .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+
+  /* RESULT CARD */
+  .result-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 24px; animation: fadeSlide .3s ease; display: none; }
+  .result-card.visible { display: block; }
+  @keyframes fadeSlide { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  .result-header { background: rgba(239,68,68,.08); border-bottom: 1px solid rgba(239,68,68,.2); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .result-header-title { font-family: 'Exo 2', sans-serif; font-weight: 700; font-size: 14px; color: var(--red); display: flex; align-items: center; gap: 8px; }
+  .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; font-family: 'Exo 2', sans-serif; letter-spacing: .5px; }
+  .status-blocked { background: rgba(239,68,68,.15); color: var(--red); border: 1px solid rgba(239,68,68,.3); }
+  .status-pending { background: rgba(240,180,41,.15); color: var(--yellow); border: 1px solid rgba(240,180,41,.3); }
+  .status-completed { background: rgba(34,197,94,.15); color: var(--green); border: 1px solid rgba(34,197,94,.3); }
+  .result-body { padding: 20px; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .info-item label { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); display: block; margin-bottom: 4px; }
+  .info-item .value { font-family: 'Exo 2', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); }
+  .info-item .value.amount { font-size: 20px; font-weight: 700; color: var(--red); }
+  .info-item .value.tx { font-size: 12px; color: var(--muted); word-break: break-all; font-family: monospace; background: var(--bg); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border); }
+  .divider { height: 1px; background: var(--border); margin: 16px 0; }
+  .notice-box { background: rgba(239,68,68,.06); border: 1px solid rgba(239,68,68,.2); border-radius: 8px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; }
+  .notice-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .notice-text { font-size: 13px; color: #fca5a5; line-height: 1.6; }
+  .notice-text strong { color: #fff; font-family: 'Exo 2', sans-serif; font-size: 14px; display: block; margin-bottom: 4px; }
+
+  /* TABLE */
+  .table-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .table-title { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 15px; }
+  .table-meta { font-size: 12px; color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: rgba(255,255,255,.02); }
+  th { padding: 11px 16px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); border-bottom: 1px solid var(--border); }
+  td { padding: 12px 16px; border-bottom: 1px solid rgba(37,43,59,.6); font-size: 13px; }
+  tbody tr:hover { background: rgba(255,255,255,.02); }
+  tbody tr:last-child td { border-bottom: none; }
+  .td-id { font-family: monospace; color: var(--accent2); font-size: 12.5px; }
+  .td-amount { font-family: 'Exo 2', sans-serif; font-weight: 600; color: var(--red); }
+  .td-method { color: var(--muted); font-size: 12.5px; }
+  .td-date { color: var(--muted); font-size: 12px; }
+  .td-tx { font-family: monospace; font-size: 11px; color: var(--muted); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 48px 20px; color: var(--muted); }
+  .empty-state svg { margin-bottom: 12px; opacity: .4; }
+  .empty-state p { font-size: 13px; }
+
+  /* LOADING */
+  .spinner { display: none; width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent2); border-radius: 50%; animation: spin .6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo"><span>1x<em>PARTNERS</em></span></div>
+  <div class="nav-section">
+    <div class="nav-label">Main Menu</div>
+    <a href="1xpartners-dashboard.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Main page
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>Websites
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Commission structure
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Payment history
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Account
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.15 13 19.79 19.79 0 0 1 1.08 4.33 2 2 0 0 1 3.06 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 17z"/></svg>Contacts
+    </a>
+    <a href="#" class="nav-item deposit-link">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>Deposit
+    </a>
+    <a href="#" class="nav-item withdraw-link">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>Withdraw
+    </a>
+    <a href="withdr.html" class="nav-item problem-link active">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Withdrawal Problem<span class="nav-badge">!</span>
+    </a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Marketing</div>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Affiliate links
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/></svg>Promo codes
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Media
+    </a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Reports</div>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Summary
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Full report
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Marketing tools
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Player report
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="11" x2="23" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg>Sub-affiliate report
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-title">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Withdrawal Problem
+    </div>
+    <div class="topbar-right">
+      <a href="1xpartners-dashboard.html" class="btn btn-ghost">← Back to Dashboard</a>
+      <span class="aff-id">🇬🇧 EN &nbsp;|&nbsp; Aff ID: <strong>4101738</strong></span>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- Alert Banner -->
+    <div class="alert-banner">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div class="alert-text"><strong>Withdrawal Issue Detected</strong> — Some transactions in your account have been flagged. Use the search below to look up any transaction by Player ID or Transaction ID.</div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section">
+      <div class="search-title">Search Transaction</div>
+      <div class="search-subtitle">Enter a Player ID or Transaction ID to look up withdrawal details</div>
+      <div class="search-row">
+        <div class="search-input-wrap">
+          <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="search-input" id="searchInput" type="text" placeholder="Enter Player ID or Transaction ID...">
+        </div>
+        <button class="btn btn-primary" id="searchBtn" onclick="doSearch()">
+          <div class="spinner" id="spinner"></div>
+          <span id="searchBtnText">Search</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Dynamic Result Card -->
+    <div class="result-card" id="resultCard">
+      <div class="result-header">
+        <div class="result-header-title">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Transaction Found
+        </div>
+        <span class="status-badge status-blocked">● BLOCKED</span>
+      </div>
+      <div class="result-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Player ID</label>
+            <div class="value" id="r-playerid">—</div>
+          </div>
+          <div class="info-item">
+            <label>Transaction ID</label>
+            <div class="value tx" id="r-txid">—</div>
+          </div>
+          <div class="info-item">
+            <label>Amount</label>
+            <div class="value amount" id="r-amount">NRS 1,700</div>
+          </div>
+          <div class="info-item">
+            <label>Status</label>
+            <div><span class="status-badge status-blocked">● BLOCKED</span></div>
+          </div>
+          <div class="info-item">
+            <label>Withdrawal Method</label>
+            <div class="value" id="r-method">eSewa / Bank Transfer</div>
+          </div>
+          <div class="info-item">
+            <label>Date Requested</label>
+            <div class="value" id="r-date">—</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="notice-box">
+          <div class="notice-icon">ℹ️</div>
+          <div class="notice-text">
+            <strong>Why is my withdrawal blocked?</strong>
+            Your withdrawal of <strong style="color:var(--red)">NRS 1,700</strong> has been temporarily held by the payment gateway due to a verification mismatch. This is a standard security procedure. Please deposit NRS 1,700 through the same method to release your amount.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Withdrawal Table -->
+    <div class="table-section">
+      <div class="table-header">
+        <div class="table-title">Recent Withdrawal Requests</div>
+        <div class="table-meta">Showing 10 of 47 records</div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Player ID</th>
+            <th>Transaction ID</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── Table data ──
+  const methods = ['eSewa','Khalti','Bank Transfer','IME Pay','ConnectIPS'];
+  const statuses = [
+    {label:'Completed', cls:'status-completed'},
+    {label:'Pending',   cls:'status-pending'},
+    {label:'Blocked',   cls:'status-blocked'},
+    {label:'Completed', cls:'status-completed'},
+    {label:'Completed', cls:'status-completed'},
+    {label:'Pending',   cls:'status-pending'},
+    {label:'Blocked',   cls:'status-blocked'},
+    {label:'Completed', cls:'status-completed'},
+    {label:'Pending',   cls:'status-pending'},
+    {label:'Blocked',   cls:'status-blocked'},
+  ];
+  const dates = [
+    '30 Mar 2025','29 Mar 2025','28 Mar 2025','27 Mar 2025',
+    '26 Mar 2025','25 Mar 2025','24 Mar 2025','23 Mar 2025',
+    '22 Mar 2025','21 Mar 2025'
+  ];
+  const amounts = [1700,2500,850,3200,1200,1700,4500,680,1700,2100];
+  const playerIds = [
+    'PLR-88234','PLR-71109','PLR-93441','PLR-20183','PLR-55670',
+    'PLR-38812','PLR-47299','PLR-61043','PLR-10928','PLR-76554'
+  ];
+
+  function randTx() {
+    const chars='0123456789abcdef';
+    return 'TX'+Array.from({length:16},()=>chars[Math.floor(Math.random()*chars.length)]).join('').toUpperCase();
+  }
+
+  const txIds = Array.from({length:10},()=>randTx());
+
+  const tbody = document.getElementById('tableBody');
+  for(let i=0;i<10;i++){
+    const s = statuses[i];
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="td-id">${playerIds[i]}</td>
+      <td class="td-tx">${txIds[i]}</td>
+      <td class="td-amount">NRS ${amounts[i].toLocaleString()}</td>
+      <td class="td-method">${methods[i%methods.length]}</td>
+      <td class="td-date">${dates[i]}</td>
+      <td><span class="status-badge ${s.cls}">● ${s.label}</span></td>
+    `;
+    tbody.appendChild(row);
+  }
+
+  // ── Search ──
+  function doSearch() {
+    const val = document.getElementById('searchInput').value.trim();
+    if(!val) { document.getElementById('searchInput').focus(); return; }
+
+    const btn = document.getElementById('searchBtn');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('searchBtnText');
+    spinner.style.display = 'block';
+    btnText.textContent = 'Searching...';
+    btn.disabled = true;
+
+    setTimeout(()=>{
+      spinner.style.display = 'none';
+      btnText.textContent = 'Search';
+      btn.disabled = false;
+
+      // Populate result
+      document.getElementById('r-playerid').textContent = val;
+      document.getElementById('r-txid').textContent = randTx();
+      document.getElementById('r-date').textContent = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+      document.getElementById('r-method').textContent = 'Electronic';
+
+      const card = document.getElementById('resultCard');
+      card.classList.remove('visible');
+      void card.offsetWidth; // reflow to retrigger animation
+      card.classList.add('visible');
+      card.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 900);
+  }
+
+  document.getElementById('searchInput').addEventListener('keydown', e=>{
+    if(e.key==='Enter') doSearch();
+  });
+</script>
+</body>
+</html>

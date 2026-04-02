@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1xPartners - Main Page</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f1117; --sidebar-bg: #161a24; --card-bg: #1a1f2e; --border: #252b3b;
+    --accent: #1a73e8; --accent2: #00c4ff; --yellow: #f0b429; --green: #22c55e;
+    --red: #ef4444; --orange: #ff6b1a; --text: #e2e8f0; --muted: #7a8599;
+  }
+  body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; font-size: 14px; }
+
+  .sidebar { width: 215px; flex-shrink: 0; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding-bottom: 24px; overflow-y: auto; }
+  .logo { padding: 18px 20px; border-bottom: 1px solid var(--border); margin-bottom: 6px; }
+  .logo span { font-family: 'Exo 2', sans-serif; font-weight: 800; font-size: 20px; color: var(--orange); letter-spacing: 1px; }
+  .logo span em { color: var(--text); font-style: normal; }
+  .nav-section { padding: 4px 0 8px; }
+  .nav-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; color: var(--muted); padding: 10px 20px 5px; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; color: var(--muted); cursor: pointer; transition: all .18s; border-left: 3px solid transparent; font-size: 13px; text-decoration: none; }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,.04); }
+  .nav-item.active { color: var(--accent2); background: rgba(0,196,255,.07); border-left-color: var(--accent2); }
+  .nav-item.deposit-link { color: var(--green); }
+  .nav-item.deposit-link:hover { color: #4ade80; background: rgba(34,197,94,.07); }
+  .nav-item.withdraw-link { color: var(--yellow); }
+  .nav-item.withdraw-link:hover { color: #fbbf24; background: rgba(240,180,41,.07); }
+  .nav-item.problem-link { color: var(--red); }
+  .nav-item.problem-link:hover { color: #f87171; background: rgba(239,68,68,.07); }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .nav-badge { margin-left: auto; background: var(--red); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; font-family: 'Exo 2', sans-serif; }
+
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .topbar { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .topbar-title { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 17px; display: flex; align-items: center; gap: 10px; color: var(--accent2); }
+  .topbar-right { display: flex; align-items: center; gap: 14px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 5px; font-size: 12.5px; font-weight: 500; cursor: pointer; border: none; font-family: inherit; transition: opacity .15s; }
+  .btn:hover { opacity: .85; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .aff-id { font-size: 12.5px; color: var(--muted); }
+  .aff-id strong { color: var(--accent2); }
+
+  .page-tabs { display: flex; padding: 0 24px; background: var(--card-bg); border-bottom: 1px solid var(--border); }
+  .page-tab { padding: 12px 18px; font-size: 13px; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; }
+  .page-tab.active { color: var(--accent2); border-bottom-color: var(--accent2); }
+  .page-tab:hover { color: var(--text); }
+
+  .stat-strip { display: grid; grid-template-columns: repeat(5, 1fr); border-bottom: 1px solid var(--border); }
+  .stat-card { padding: 18px 22px; border-right: 1px solid var(--border); position: relative; }
+  .stat-card:last-child { border-right: none; }
+  .stat-amount { font-family: 'Exo 2', sans-serif; font-size: 24px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+  .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); }
+  .stat-bottom-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; }
+
+  .content { padding: 22px 24px; flex: 1; }
+
+  .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+  .qa-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: border-color .18s, transform .15s; text-decoration: none; }
+  .qa-card:hover { transform: translateY(-2px); }
+  .qa-card.dep { border-left: 3px solid var(--green); }
+  .qa-card.with { border-left: 3px solid var(--yellow); }
+  .qa-card.prob { border-left: 3px solid var(--red); }
+  .qa-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .qa-icon.dep { background: rgba(34,197,94,.12); }
+  .qa-icon.with { background: rgba(240,180,41,.12); }
+  .qa-icon.prob { background: rgba(239,68,68,.12); }
+  .qa-label { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 13.5px; color: var(--text); }
+  .qa-sub { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+  .filter-bar { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .filter-label { font-size: 13px; color: var(--muted); }
+  .select-wrap { position: relative; display: inline-flex; align-items: center; }
+  .select-wrap select { appearance: none; background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 7px 34px 7px 12px; border-radius: 5px; font-family: inherit; font-size: 13px; cursor: pointer; outline: none; }
+  .select-wrap::after { content: '▾'; position: absolute; right: 10px; color: var(--muted); pointer-events: none; font-size: 11px; }
+
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .chart-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; }
+  .chart-title { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 15px; margin-bottom: 14px; }
+  .chart-filters { display: flex; gap: 6px; margin-bottom: 16px; }
+  .cf-btn { padding: 3px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--muted); font-family: inherit; transition: all .15s; }
+  .cf-btn.active, .cf-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chart-wrap { height: 200px; position: relative; }
+  canvas { width: 100% !important; }
+  .legend { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .legend-dot { width: 12px; height: 4px; border-radius: 2px; }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="logo"><span>1x<em>PARTNERS</em></span></div>
+  <div class="nav-section">
+    <div class="nav-label">Main Menu</div>
+    <a href="1xpartners-dashboard.html" class="nav-item active">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Main page
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10z"/></svg>Websites
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Commission structure
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Payment history
+    </a>
+    <a href="depowd.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Account
+    </a>
+    <a href="depowd.html" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.15 13 19.79 19.79 0 0 1 1.08 4.33 2 2 0 0 1 3.06 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 17z"/></svg>Contacts
+    </a>
+    <a href="depowd.html" class="nav-item deposit-link">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>Deposit
+    </a>
+    <a href="depowd.html" class="nav-item withdraw-link">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>Withdraw
+    </a>
+    <a href="withdr.html" class="nav-item problem-link">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Withdrawal Problem<span class="nav-badge">!</span>
+    </a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Marketing</div>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Affiliate links
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>Promo codes
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Media
+    </a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Reports</div>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Summary
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Full report
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Marketing tools
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Player report
+    </a>
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="11" x2="23" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg>Sub-affiliate report
+    </a>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-title">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>Main page
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-ghost">📱 App for Android™</button>
+      <button class="btn btn-primary" id="refreshBtn">↻ REFRESH STATISTICS</button>
+      <span class="aff-id">🇬🇧 EN &nbsp;|&nbsp; Aff ID: <strong>4101738</strong></span>
+    </div>
+  </header>
+  <nav class="page-tabs">
+    <div class="page-tab active">Overview</div>
+    <div class="page-tab">Details</div>
+    <div class="page-tab">Conversions</div>
+  </nav>
+  <div class="stat-strip">
+    <div class="stat-card"><div class="stat-amount">$0</div><div class="stat-label">💳 Available to withdraw</div><div class="stat-bottom-bar" style="background:var(--muted)"></div></div>
+    <div class="stat-card"><div class="stat-amount" style="color:var(--yellow)">$-0.43</div><div class="stat-label">⚡ Yesterday</div><div class="stat-bottom-bar" style="background:var(--yellow)"></div></div>
+    <div class="stat-card"><div class="stat-amount">$0</div><div class="stat-label">📅 Current month</div><div class="stat-bottom-bar" style="background:var(--accent2)"></div></div>
+    <div class="stat-card"><div class="stat-amount" style="color:var(--red)">$-0.35</div><div class="stat-label">📆 30 Days</div><div class="stat-bottom-bar" style="background:var(--red)"></div></div>
+    <div class="stat-card"><div class="stat-amount" style="color:var(--green)">$0.48</div><div class="stat-label">✔ Total</div><div class="stat-bottom-bar" style="background:var(--green)"></div></div>
+  </div>
+  <div class="content">
+    <div class="quick-actions">
+      <a href="#" class="qa-card dep">
+        <div class="qa-icon dep">💰</div>
+        <div><div class="qa-label">Deposit Funds</div><div class="qa-sub">Add balance to your account</div></div>
+      </a>
+      <a href="#" class="qa-card with">
+        <div class="qa-icon with">🏦</div>
+        <div><div class="qa-label">Withdraw</div><div class="qa-sub">Request a payout</div></div>
+      </a>
+      <a href="withdr.html" class="qa-card prob">
+        <div class="qa-icon prob">⚠️</div>
+        <div><div class="qa-label">Withdrawal Problem</div><div class="qa-sub">Check failed transactions</div></div>
+      </a>
+    </div>
+    <div class="filter-bar">
+      <span class="filter-label">Time interval</span>
+      <div class="select-wrap"><select><option>1 month</option><option>1 week</option><option>3 months</option></select></div>
+      <span class="filter-label">Currency</span>
+      <div class="select-wrap"><select><option>USD</option><option>EUR</option><option>BTC</option></select></div>
+      <button class="btn btn-primary">APPLY</button>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">Conversion statistics</div>
+        <div class="chart-filters"><button class="cf-btn">1w</button><button class="cf-btn active">1m</button><button class="cf-btn">All</button></div>
+        <div class="chart-wrap"><canvas id="convChart"></canvas></div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#00c4ff"></div>Views</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#6366f1"></div>Clicks</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#1a73e8"></div>Direct links</div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Registration statistics</div>
+        <div class="chart-filters"><button class="cf-btn">1w</button><button class="cf-btn active">1m</button><button class="cf-btn">All</button></div>
+        <div class="chart-wrap"><canvas id="regChart"></canvas></div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div>Registrations</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div>New depositors</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f0b429"></div>Commission amount</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+  const labels = Array.from({length:30},(_,i)=>(i+2)+' Mar');
+  const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+  const gen=(n,a,b,spike=false)=>Array.from({length:n},(_,i)=>spike&&(i===20||i===21)?rnd(b*3,b*5):rnd(a,b));
+  const chartOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,backgroundColor:'#1a1f2e',borderColor:'#252b3b',borderWidth:1,titleColor:'#e2e8f0',bodyColor:'#7a8599'}},scales:{x:{grid:{color:'#1e2535'},ticks:{color:'#7a8599',maxTicksLimit:6,font:{size:11}}},y:{grid:{color:'#1e2535'},ticks:{color:'#7a8599',font:{size:11}},beginAtZero:true}},elements:{point:{radius:0,hoverRadius:4},line:{tension:0.4}}};
+  new Chart(document.getElementById('convChart'),{type:'line',data:{labels,datasets:[{label:'Views',data:gen(30,0,5,true),borderColor:'#00c4ff',backgroundColor:'rgba(0,196,255,.1)',fill:true,borderWidth:2},{label:'Clicks',data:gen(30,0,2),borderColor:'#6366f1',backgroundColor:'rgba(99,102,241,.08)',fill:true,borderWidth:2},{label:'Direct links',data:gen(30,0,3),borderColor:'#1a73e8',backgroundColor:'rgba(26,115,232,.08)',fill:true,borderWidth:2}]},options:chartOpts});
+  new Chart(document.getElementById('regChart'),{type:'line',data:{labels,datasets:[{label:'Registrations',data:gen(30,0,8,true),borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,.15)',fill:true,borderWidth:2},{label:'New depositors',data:gen(30,0,5,true),borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.12)',fill:true,borderWidth:2},{label:'Commission',data:gen(30,0,1),borderColor:'#f0b429',backgroundColor:'rgba(240,180,41,.08)',fill:true,borderWidth:2}]},options:chartOpts});
+  document.querySelectorAll('.page-tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.page-tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');});});
+  document.querySelectorAll('.chart-filters').forEach(grp=>{grp.querySelectorAll('.cf-btn').forEach(btn=>{btn.addEventListener('click',()=>{grp.querySelectorAll('.cf-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');});});});
+  document.getElementById('refreshBtn').addEventListener('click',function(){this.textContent='↻ Refreshing...';setTimeout(()=>this.textContent='↻ REFRESH STATISTICS',1200);});
+</script>
+</body>
+</html>

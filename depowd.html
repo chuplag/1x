@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1xBET Admin Panel</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+.xw{background:#0d0f1a;min-height:100vh;font-family:'Exo 2',sans-serif;color:#e8eaf0}
+.xh{background:#13151f;border-bottom:2px solid #f5a623;padding:11px 20px;display:flex;align-items:center;justify-content:space-between}
+.xlogo{font-family:'Rajdhani',sans-serif;font-size:25px;font-weight:700;color:#f5a623;letter-spacing:2px}
+.xlogo span{color:#e8eaf0}
+.hr{display:flex;align-items:center;gap:12px}
+.ubadge{background:#1a1c2e;border:1px solid #2d3054;border-radius:7px;padding:5px 12px;font-size:12px;color:#9098bb}
+.ubadge strong{color:#f5a623}
+.bpill{background:#f5a623;color:#0d0f1a;font-weight:700;font-size:13px;border-radius:6px;padding:5px 13px;font-family:'Rajdhani',sans-serif}
+.xnav{background:#111320;border-bottom:1px solid #1e2135;display:flex;padding:0 20px}
+.ntab{padding:12px 18px;font-size:13px;font-weight:600;color:#5a6288;cursor:pointer;border-bottom:3px solid transparent;text-transform:uppercase;font-family:'Rajdhani',sans-serif}
+.ntab.active{color:#f5a623;border-bottom-color:#f5a623;background:rgba(245,166,35,.05)}
+.xbody{padding:18px 20px}
+.srow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.sc{background:#12141f;border:1px solid #1e2135;border-radius:10px;padding:14px 16px;position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.sc.d::before{background:#22c55e}.sc.w::before{background:#f5a623}.sc.t::before{background:#3b82f6}.sc.s::before{background:#a855f7}
+.slbl{font-size:10px;color:#5a6288;text-transform:uppercase;letter-spacing:.9px;margin-bottom:6px;font-family:'Rajdhani',sans-serif}
+.sval{font-family:'Rajdhani',sans-serif;font-size:21px;font-weight:700;color:#e8eaf0;line-height:1;margin-bottom:2px}
+.ssub{font-size:11px;color:#22c55e;font-weight:500}
+.ssub.o{color:#f5a623}
+.search-box{background:#12141f;border:1px solid #252840;border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.search-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:#f5a623;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.search-title .dot{width:6px;height:6px;border-radius:50%;background:#f5a623}
+.sfields{display:grid;grid-template-columns:repeat(4, 1fr);gap:15px;align-items:end}
+.sgroup{display:flex;flex-direction:column;gap:5px}
+.slabel{font-size:10.5px;color:#5a6288;text-transform:uppercase;letter-spacing:.7px;font-family:'Rajdhani',sans-serif}
+.sinput{background:#0d0f1a;border:1px solid #2a2d48;border-radius:7px;padding:8px 12px;color:#e8eaf0;font-size:13px;font-family:'Exo 2',sans-serif;outline:none;width:100%}
+.sinput:focus{border-color:#f5a623}
+.sselect{background:#0d0f1a;border:1px solid #2a2d48;border-radius:7px;padding:8px 12px;color:#e8eaf0;font-size:13px;font-family:'Exo 2',sans-serif;outline:none;width:100%;cursor:pointer}
+.sselect:focus{border-color:#f5a623}
+.sbtn-container{grid-column: span 4; display: flex; justify-content: flex-end; margin-top: 10px;}
+.sbtn{background:#f5a623;color:#0d0f1a;border:none;border-radius:7px;padding:10px 35px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:1px;white-space:nowrap}
+.result-box{background:#0d0f1a;border:1px solid #1e2135;border-radius:10px;margin-top:14px;overflow:hidden;display:none}
+.rtable{width:100%;border-collapse:collapse;font-size:12px}
+.rtable thead tr{background:#111320}
+.rtable thead th{padding:8px 14px;text-align:left;color:#3d4566;font-size:10px;text-transform:uppercase;font-family:'Rajdhani',sans-serif;border-bottom:1px solid #191b2a}
+.rtable tbody tr{border-bottom:1px solid #161828}
+.rtable tbody td{padding:8px 14px;color:#b8bcd8;vertical-align:middle}
+.tid{font-family:'Rajdhani',sans-serif;color:#5a6288;font-size:10.5px}
+.tamt{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px}
+.ad{color:#22c55e}.aw{color:#f5a623}
+.mpill{display:inline-block;background:#191b2a;border:1px solid #242740;border-radius:4px;padding:2px 7px;font-size:10px;color:#7078a0;font-family:'Rajdhani',sans-serif;font-weight:600}
+.stag{display:inline-flex;align-items:center;gap:3px;background:rgba(34,197,94,.1);color:#22c55e;font-size:10px;font-weight:700;border-radius:4px;padding:2px 7px;font-family:'Rajdhani',sans-serif}
+.sdot{width:4px;height:4px;background:#22c55e;border-radius:50%;display:inline-block}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top: 20px;}
+.tcard{background:#12141f;border:1px solid #1e2135;border-radius:11px;overflow:hidden}
+.sbody{max-height:400px;overflow-y:auto;scrollbar-width:thin}
+.pfoot{margin-top:18px;text-align:center;color:#2e3354;font-size:11px;padding-bottom:14px}
+.pfoot span{color:#f5a623}
+</style>
+</head>
+<body>
+
+<div class="xw">
+<div class="xh">
+  <div class="xlogo">1x<span>BET</span></div>
+  <div class="hr">
+    <div class="ubadge">Account: <strong>Admin Panel</strong></div>
+    <div class="bpill">रु 0</div>
+  </div>
+</div>
+
+<div class="xbody">
+  <div class="srow">
+    <div class="sc d"><div class="slbl">Total Deposits</div><div class="sval">200</div><div class="ssub">All Successful</div></div>
+    <div class="sc w"><div class="slbl">Total Withdrawals</div><div class="sval">352</div><div class="ssub o">All Successful</div></div>
+    <div class="sc t"><div class="slbl">Deposited Amount</div><div class="sval" id="dep-total">रु 0</div><div class="ssub">NPR</div></div>
+    <div class="sc s"><div class="slbl">Withdrawn Amount</div><div class="sval" id="with-total">रु 0</div><div class="ssub o">NPR</div></div>
+  </div>
+
+  <div class="search-box">
+    <div class="search-title"><div class="dot"></div>Manual Player Lookup</div>
+    <div class="sfields">
+      <div class="sgroup"><div class="slabel">Player ID</div><input class="sinput" id="pid-input" placeholder="e.g. PL00001" /></div>
+      <div class="sgroup"><div class="slabel">Amount (NPR)</div><input class="sinput" id="amt-input" type="number" placeholder="e.g. 100" /></div>
+      <div class="sgroup"><div class="slabel">Date</div><input class="sinput" id="date-input" type="date" /></div>
+      <div class="sgroup"><div class="slabel">Time</div><input class="sinput" id="time-input" type="time" /></div>
+      <div class="sgroup">
+        <div class="slabel">Type</div>
+        <select class="sselect" id="type-select"><option value="Deposit">Deposit</option><option value="Withdrawal">Withdrawal</option></select>
+      </div>
+      <div class="sgroup">
+        <div class="slabel">Method</div>
+        <select class="sselect" id="method-select">
+          <option value="eSewa">eSewa</option><option value="Khalti">Khalti</option><option value="ConnectIPS">ConnectIPS</option><option value="Electronic">Electronic</option>
+        </select>
+      </div>
+      <div class="sgroup"><div class="slabel">Status</div><select class="sselect"><option>SUCCESS</option></select></div>
+      <div class="sbtn-container"><button class="sbtn" onclick="doSearch()">GENERATE & SEARCH</button></div>
+    </div>
+
+    <div class="result-box" id="result-box">
+      <div class="rtable-container" style="overflow-x:auto; padding: 10px;">
+        <table class="rtable">
+          <thead><tr><th>Tz ID</th><th>Player ID</th><th>Date/Time</th><th>Amount</th><th>Type</th><th>Method</th><th>Status</th></tr></thead>
+          <tbody id="result-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tgrid">
+    <div class="tcard">
+      <div style="padding:12px; background:rgba(34,197,94,.05); border-bottom:1px solid #1e2135; color:#22c55e; font-weight:700; font-family:'Rajdhani';">RECENT DEPOSITS</div>
+      <div class="sbody"><table class="rtable"><tbody id="dep-tbody"></tbody></table></div>
+    </div>
+    <div class="tcard">
+      <div style="padding:12px; background:rgba(245,166,35,.05); border-bottom:1px solid #1e2135; color:#f5a623; font-weight:700; font-family:'Rajdhani';">RECENT WITHDRAWALS</div>
+      <div class="sbody"><table class="rtable"><tbody id="with-tbody"></tbody></table></div>
+    </div>
+  </div>
+
+</div>
+<div class="pfoot">© 2026 <span>1xBet</span> · Regional Admin</div>
+</div>
+
+<script>
+const methods=['eSewa','Khalti','ConnectIPS','Electronic'];
+const smallAmts=[100, 200, 300, 500, 1000, 2500];
+
+// Initialize Search Inputs
+const today = new Date();
+document.getElementById('date-input').valueAsDate = today;
+document.getElementById('time-input').value = today.getHours().toString().padStart(2,'0')+":"+today.getMinutes().toString().padStart(2,'0');
+
+function rId(){return 'TZ'+Math.random().toString(36).substring(2,9).toUpperCase();}
+function fmt(n){return 'रु '+Math.round(n).toLocaleString('en-IN');}
+
+function rAmt(){
+  const r=Math.random();
+  if(r<0.6) return smallAmts[Math.floor(Math.random()*smallAmts.length)];
+  return Math.round((Math.random()*65000 + 5000)/100)*100;
+}
+
+// RESTORED Background History Functions
+function buildHistory(){
+    const dBody = document.getElementById('dep-tbody');
+    const wBody = document.getElementById('with-tbody');
+    let dSum = 0, wSum = 0;
+
+    for(let i=0; i<30; i++){
+        let a = rAmt(); dSum += a;
+        dBody.innerHTML += `<tr><td class="tid">${rId()}</td><td style="font-size:10px;">PL00${100+i}</td><td class="tamt ad">${fmt(a)}</td><td><span class="mpill">${methods[Math.floor(Math.random()*4)]}</span></td></tr>`;
+        
+        let b = rAmt(); wSum += b;
+        wBody.innerHTML += `<tr><td class="tid">${rId()}</td><td style="font-size:10px;">PL00${200+i}</td><td class="tamt aw">${fmt(b)}</td><td><span class="mpill">${methods[Math.floor(Math.random()*4)]}</span></td></tr>`;
+    }
+    document.getElementById('dep-total').textContent = fmt(dSum);
+    document.getElementById('with-total').textContent = fmt(wSum);
+}
+
+// SEARCH FUNCTION
+function doSearch(){
+  const pid = document.getElementById('pid-input').value.trim().toUpperCase() || "PL00001";
+  const amt = parseFloat(document.getElementById('amt-input').value) || 0;
+  const type = document.getElementById('type-select').value;
+  const method = document.getElementById('method-select').value;
+  const rawDate = document.getElementById('date-input').value;
+  const rawTime = document.getElementById('time-input').value;
+  
+  const rb = document.getElementById('result-box');
+  const tbody = document.getElementById('result-tbody');
+  tbody.innerHTML = '';
+  rb.style.display = 'block';
+
+  if(amt > 70000) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#ef4444;">Limit Exceeded: रु 70,000 max.</td></tr>`;
+      return;
+  }
+
+  let formattedDate = rawDate ? rawDate.split('-').reverse().join('.') : "02.04.2026";
+  const isD = type === 'Deposit';
+
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="tid">${rId()}</td>
+    <td style="font-weight:600; color:#fff;">${pid}</td>
+    <td>${formattedDate} ${rawTime}</td>
+    <td class="tamt ${isD?'ad':'aw'}">${fmt(amt)}</td>
+    <td><span class="mpill" style="color:${isD?'#22c55e':'#f5a623'}">${type}</span></td>
+    <td><span class="mpill">${method}</span></td>
+    <td><span class="stag"><span class="sdot"></span>SUCCESS</span></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+buildHistory();
+</script>
+</body>
+</html>

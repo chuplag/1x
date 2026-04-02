@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1xPartners | Login Access</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background: #0d0f1a; 
+            color: #e8eaf0; 
+            font-family: 'Exo 2', sans-serif; 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .login-card {
+            background: #12141f; 
+            border: 1px solid #1e2135; 
+            border-radius: 12px;
+            padding: 40px; 
+            width: 100%; 
+            max-width: 400px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center; 
+            border-top: 3px solid #f5a623;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-logo { 
+            font-family: 'Rajdhani', sans-serif; 
+            font-size: 32px; 
+            font-weight: 700; 
+            color: #f5a623; 
+            margin-bottom: 30px; 
+            letter-spacing: 3px; 
+        }
+        .login-logo span { color: #fff; }
+
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-label { 
+            font-family: 'Rajdhani', sans-serif; 
+            font-size: 11px; 
+            color: #5a6288; 
+            text-transform: uppercase; 
+            margin-bottom: 8px; 
+            display: block; 
+            letter-spacing: 1px; 
+        }
+
+        .login-input {
+            width: 100%; 
+            background: #0d0f1a; 
+            border: 1px solid #2a2d48; 
+            border-radius: 7px;
+            padding: 12px 15px; 
+            color: #fff; 
+            font-size: 14px; 
+            outline: none; 
+            transition: 0.3s;
+        }
+        .login-input:focus { border-color: #f5a623; }
+
+        .login-btn {
+            width: 100%; 
+            background: #f5a623; 
+            color: #0d0f1a; 
+            border: none; 
+            border-radius: 7px;
+            padding: 14px; 
+            font-family: 'Rajdhani', sans-serif; 
+            font-size: 16px; 
+            font-weight: 700;
+            cursor: pointer; 
+            letter-spacing: 1px; 
+            margin-top: 10px;
+        }
+
+        #error-msg { 
+            color: #ef4444; 
+            font-size: 12px; 
+            margin-top: 15px; 
+            display: none; 
+            font-weight: 600;
+        }
+
+        .loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #0d0f1a;
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="login-logo">1x<span>PARTNERS</span></div>
+        <div id="login-form">
+            <div class="input-group">
+                <label class="input-label">Partner Username</label>
+                <input type="text" id="user-field" class="login-input" placeholder="username">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Security Password</label>
+                <input type="password" id="pass-field" class="login-input" placeholder="••••••••">
+            </div>
+            <button class="login-btn" id="auth-btn" onclick="checkAuth()">
+                <span id="btn-text">AUTHORIZE LOGIN</span>
+                <div class="loader" id="btn-loader"></div>
+            </button>
+            <div id="error-msg">ACCESS DENIED: INVALID PARTNER KEY</div>
+        </div>
+    </div>
+
+    <script>
+        function checkAuth() {
+            const u = document.getElementById('user-field').value;
+            const p = document.getElementById('pass-field').value;
+            const err = document.getElementById('error-msg');
+            const btnText = document.getElementById('btn-text');
+            const loader = document.getElementById('btn-loader');
+
+            if(u === "prasanna" && p === "root@knocker") {
+                // Show loading state
+                btnText.style.display = 'none';
+                loader.style.display = 'block';
+                
+                // Redirect after a small delay for "processing" feel
+                setTimeout(() => {
+                    window.location.href = "1xpartners-dashboard.html";
+                }, 800);
+            } else {
+                err.style.display = 'block';
+                setTimeout(() => { err.style.display = 'none'; }, 2000);
+            }
+        }
+
+        // Allow Enter key to submit
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkAuth();
+        });
+    </script>
+</body>
+</html>
