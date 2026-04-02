@@ -80,7 +80,7 @@
   <div class="search-box">
     <div class="search-title"><div class="dot"></div>Manual Player Lookup</div>
     <div class="sfields">
-      <div class="sgroup"><div class="slabel">Player ID</div><input class="sinput" id="pid-input" placeholder="e.g. 1621151391" /></div>
+      <div class="sgroup"><div class="slabel">Player ID</div><input class="sinput" id="pid-input" type="number" placeholder="e.g. 1621151391" /></div>
       <div class="sgroup"><div class="slabel">Amount (NPR)</div><input class="sinput" id="amt-input" type="number" placeholder="e.g. 100" /></div>
       <div class="sgroup"><div class="slabel">Date</div><input class="sinput" id="date-input" type="date" /></div>
       <div class="sgroup"><div class="slabel">Time</div><input class="sinput" id="time-input" type="time" /></div>
@@ -135,7 +135,7 @@ document.getElementById('time-input').value = today.getHours().toString().padSta
 function rId(){return 'TZ'+Math.random().toString(36).substring(2,9).toUpperCase();}
 function fmt(n){return 'रु '+Math.round(n).toLocaleString('en-IN');}
 
-// Helper to generate a random 10-digit number like 1621151391
+// Updated Helper to generate ONLY a 10 digit random number
 function genPlayerId() {
     return Math.floor(1000000000 + Math.random() * 9000000000);
 }
@@ -146,7 +146,7 @@ function rAmt(){
   return Math.round((Math.random()*65000 + 5000)/100)*100;
 }
 
-// Fully Updated History Generator with 10-digit numeric IDs
+// History Generator using numeric 10-digit IDs
 function buildHistory(){
     const dBody = document.getElementById('dep-tbody');
     const wBody = document.getElementById('with-tbody');
@@ -163,9 +163,10 @@ function buildHistory(){
     document.getElementById('with-total').textContent = fmt(wSum);
 }
 
-// SEARCH FUNCTION updated with default 10-digit ID
+// SEARCH FUNCTION updated to handle numeric input
 function doSearch(){
-  const pid = document.getElementById('pid-input').value.trim() || "1621151391";
+  const inputVal = document.getElementById('pid-input').value.trim();
+  const pid = inputVal || "1621151391"; 
   const amt = parseFloat(document.getElementById('amt-input').value) || 0;
   const type = document.getElementById('type-select').value;
   const method = document.getElementById('method-select').value;
