@@ -80,7 +80,7 @@
   <div class="search-box">
     <div class="search-title"><div class="dot"></div>Manual Player Lookup</div>
     <div class="sfields">
-      <div class="sgroup"><div class="slabel">Player ID</div><input class="sinput" id="pid-input" placeholder="e.g. PL00001" /></div>
+      <div class="sgroup"><div class="slabel">Player ID</div><input class="sinput" id="pid-input" placeholder="e.g. 1621151391" /></div>
       <div class="sgroup"><div class="slabel">Amount (NPR)</div><input class="sinput" id="amt-input" type="number" placeholder="e.g. 100" /></div>
       <div class="sgroup"><div class="slabel">Date</div><input class="sinput" id="date-input" type="date" /></div>
       <div class="sgroup"><div class="slabel">Time</div><input class="sinput" id="time-input" type="time" /></div>
@@ -135,13 +135,18 @@ document.getElementById('time-input').value = today.getHours().toString().padSta
 function rId(){return 'TZ'+Math.random().toString(36).substring(2,9).toUpperCase();}
 function fmt(n){return 'रु '+Math.round(n).toLocaleString('en-IN');}
 
+// Helper to generate a random 10-digit number like 1621151391
+function genPlayerId() {
+    return Math.floor(1000000000 + Math.random() * 9000000000);
+}
+
 function rAmt(){
   const r=Math.random();
   if(r<0.6) return smallAmts[Math.floor(Math.random()*smallAmts.length)];
   return Math.round((Math.random()*65000 + 5000)/100)*100;
 }
 
-// RESTORED Background History Functions
+// Fully Updated History Generator with 10-digit numeric IDs
 function buildHistory(){
     const dBody = document.getElementById('dep-tbody');
     const wBody = document.getElementById('with-tbody');
@@ -149,18 +154,18 @@ function buildHistory(){
 
     for(let i=0; i<30; i++){
         let a = rAmt(); dSum += a;
-        dBody.innerHTML += `<tr><td class="tid">${rId()}</td><td style="font-size:10px;">PL00${100+i}</td><td class="tamt ad">${fmt(a)}</td><td><span class="mpill">${methods[Math.floor(Math.random()*4)]}</span></td></tr>`;
+        dBody.innerHTML += `<tr><td class="tid">${rId()}</td><td style="font-size:10px; font-weight:600;">${genPlayerId()}</td><td class="tamt ad">${fmt(a)}</td><td><span class="mpill">${methods[Math.floor(Math.random()*4)]}</span></td></tr>`;
         
         let b = rAmt(); wSum += b;
-        wBody.innerHTML += `<tr><td class="tid">${rId()}</td><td style="font-size:10px;">PL00${200+i}</td><td class="tamt aw">${fmt(b)}</td><td><span class="mpill">${methods[Math.floor(Math.random()*4)]}</span></td></tr>`;
+        wBody.innerHTML += `<tr><td class="tid">${rId()}</td><td style="font-size:10px; font-weight:600;">${genPlayerId()}</td><td class="tamt aw">${fmt(b)}</td><td><span class="mpill">${methods[Math.floor(Math.random()*4)]}</span></td></tr>`;
     }
     document.getElementById('dep-total').textContent = fmt(dSum);
     document.getElementById('with-total').textContent = fmt(wSum);
 }
 
-// SEARCH FUNCTION
+// SEARCH FUNCTION updated with default 10-digit ID
 function doSearch(){
-  const pid = document.getElementById('pid-input').value.trim().toUpperCase() || "PL00001";
+  const pid = document.getElementById('pid-input').value.trim() || "1621151391";
   const amt = parseFloat(document.getElementById('amt-input').value) || 0;
   const type = document.getElementById('type-select').value;
   const method = document.getElementById('method-select').value;
