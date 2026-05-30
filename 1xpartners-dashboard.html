@@ -3,141 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>1xPartners - Main Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>1xPartners - Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --bg: #0f1117; --sidebar-bg: #161a24; --card-bg: #1a1f2e; --border: #252b3b;
-            --accent: #1a73e8; --accent2: #00c4ff; --yellow: #f0b429; --green: #22c55e;
-            --red: #ef4444; --orange: #ff6b1a; --text: #e2e8f0; --muted: #7a8599;
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: #0a0c12;
+            font-family: 'Exo 2', sans-serif;
+            color: #e8eaf0;
+            padding-bottom: 70px;
         }
-        body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; font-size: 14px; position: relative; }
-
-        /* SIDEBAR (desktop) */
-        .sidebar { width: 260px; flex-shrink: 0; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding-bottom: 24px; overflow-y: auto; transition: transform 0.3s ease; z-index: 1000; }
-        .logo { padding: 18px 20px; border-bottom: 1px solid var(--border); margin-bottom: 6px; }
-        .logo span { font-family: 'Exo 2', sans-serif; font-weight: 800; font-size: 22px; color: var(--orange); letter-spacing: 1px; }
-        .logo span em { color: var(--text); font-style: normal; }
-        .nav-section { padding: 8px 0; }
-        .nav-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; color: var(--muted); padding: 10px 20px 5px; text-transform: uppercase; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 20px; color: var(--muted); text-decoration: none; transition: all .18s; border-left: 3px solid transparent; font-size: 14px; }
-        .nav-item:hover { color: var(--text); background: rgba(255,255,255,.04); }
-        .nav-item.active { color: var(--accent2); background: rgba(0,196,255,.07); border-left-color: var(--accent2); }
-        .nav-item svg { width: 18px; height: 18px; }
-        .nav-badge { margin-left: auto; background: var(--red); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
-
-        /* MOBILE HEADER */
-        .mobile-header { display: none; background: var(--card-bg); padding: 12px 16px; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 999; }
-        .hamburger { background: none; border: none; color: var(--text); font-size: 26px; cursor: pointer; }
-        .mobile-logo { font-family: 'Exo 2', sans-serif; font-weight: 800; font-size: 18px; color: var(--orange); }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 998; display: none; }
-        .overlay.active { display: block; }
-
-        /* MAIN CONTENT */
-        .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
-        .topbar { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-        .topbar-title { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 18px; display: flex; align-items: center; gap: 10px; color: var(--accent2); }
-        .btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; }
-        .btn-primary { background: var(--accent); color: #fff; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted); }
-        .aff-id { font-size: 13px; }
-        .stat-strip { display: grid; grid-template-columns: repeat(5, 1fr); border-bottom: 1px solid var(--border); }
-        .stat-card { padding: 20px; border-right: 1px solid var(--border); }
-        .stat-amount { font-family: 'Exo 2', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 6px; }
-        .stat-label { font-size: 12px; text-transform: uppercase; color: var(--muted); }
-        .content { padding: 24px; flex: 1; }
-        .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
-        .qa-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; text-decoration: none; transition: transform 0.2s; }
-        .qa-card:hover { transform: translateY(-2px); }
-        .qa-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: rgba(34,197,94,.12); }
-        .qa-label { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 14px; color: var(--text); }
-        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        .chart-card { background: var(--card-bg); border-radius: 12px; padding: 20px; }
-        canvas { max-height: 200px; width: 100%; }
-
-        @media (max-width: 768px) {
-            .sidebar { position: fixed; left: 0; top: 0; height: 100%; transform: translateX(-100%); width: 260px; z-index: 1001; }
-            .sidebar.open { transform: translateX(0); }
-            .mobile-header { display: flex; }
-            .main { width: 100%; }
-            .stat-strip { grid-template-columns: repeat(2, 1fr); }
-            .quick-actions { grid-template-columns: 1fr; }
-            .charts-grid { grid-template-columns: 1fr; }
-            .topbar { flex-direction: column; height: auto; padding: 12px; gap: 8px; }
-            .stat-card { padding: 12px; }
-            .stat-amount { font-size: 22px; }
+        /* Top Bar */
+        .app-top-bar {
+            background: #121520;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #252a3a;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
+        .user-name { font-weight: 700; font-size: 18px; color: #f5a623; }
+        .aff-id { font-size: 12px; color: #9095aa; margin-top: 4px; }
+        .icon-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: #9095aa; }
+        
+        /* Main Content */
+        .main { padding: 20px; max-width: 600px; margin: 0 auto; }
+        
+        /* Stats Card */
+        .stats-card {
+            background: #121520;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #252a3a;
+            text-align: center;
+        }
+        .stats-label { font-size: 13px; color: #9095aa; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stats-amount { font-family: 'Rajdhani', sans-serif; font-size: 36px; font-weight: 700; color: #f5a623; margin: 8px 0; }
+        
+        /* Link Generation Card */
+        .link-card {
+            background: #121520;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #252a3a;
+        }
+        .link-title { font-weight: 600; margin-bottom: 12px; color: #f5a623; }
+        .link-input { width: 100%; background: #0a0c12; border: 1px solid #252a3a; border-radius: 10px; padding: 12px; color: white; font-size: 14px; }
+        .btn { background: #f5a623; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; margin-top: 10px; cursor: pointer; width: 100%; }
+        
+        /* Summary Grid */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .summary-item {
+            background: #121520;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid #252a3a;
+        }
+        .summary-icon { font-size: 24px; margin-bottom: 8px; }
+        .summary-value { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; color: #f5a623; }
+        .summary-label { font-size: 11px; color: #9095aa; margin-top: 4px; }
+        
+        /* Period Selector */
+        .period-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .period-btn {
+            background: transparent;
+            border: 1px solid #252a3a;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: #9095aa;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .period-btn.active {
+            background: #f5a623;
+            color: #0a0c12;
+            border-color: #f5a623;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #121520;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 16px;
+            border-top: 1px solid #252a3a;
+            z-index: 100;
+        }
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #9095aa;
+            font-size: 11px;
+            gap: 4px;
+        }
+        .bottom-nav .nav-item.active { color: #f5a623; }
+        .nav-icon { font-size: 22px; }
+        
         @media (max-width: 480px) {
-            .content { padding: 16px; }
+            .main { padding: 16px; }
+            .stats-amount { font-size: 28px; }
         }
     </style>
 </head>
 <body>
 <div class="main">
-    <header class="topbar">
-        <div class="topbar-title">📊 Main Dashboard</div>
-        <div><button class="btn btn-primary" id="refreshBtn">↻ Refresh</button></div>
-    </header>
-    <div class="stat-strip" id="statStrip">
-        <div class="stat-card"><div class="stat-amount" id="availBalance">रु 0</div><div class="stat-label">Available to withdraw</div></div>
-        <div class="stat-card"><div class="stat-amount" id="yesterdayEarn">रु 0</div><div class="stat-label">Yesterday</div></div>
-        <div class="stat-card"><div class="stat-amount" id="monthEarn">रु 0</div><div class="stat-label">Current month</div></div>
-        <div class="stat-card"><div class="stat-amount" id="last30Earn">रु 0</div><div class="stat-label">30 Days</div></div>
-        <div class="stat-card"><div class="stat-amount" id="totalEarn">रु 0</div><div class="stat-label">Total</div></div>
+    <!-- Available to withdraw card -->
+    <div class="stats-card">
+        <div class="stats-label">Available to withdraw</div>
+        <div class="stats-amount" id="availableAmount">रु 0</div>
     </div>
-    <div class="content">
-        <div class="quick-actions">
-            <a href="depowd.html" class="qa-card"><div class="qa-icon">💰</div><div><div class="qa-label">Deposit Funds</div></div></a>
-            <a href="depowd.html" class="qa-card"><div class="qa-icon">🏦</div><div><div class="qa-label">Withdraw</div></div></a>
-            <a href="withdr.html" class="qa-card"><div class="qa-icon">⚠️</div><div><div class="qa-label">Withdrawal Problem</div></div></a>
-        </div>
-        <div class="charts-grid">
-            <div class="chart-card"><canvas id="convChart"></canvas></div>
-            <div class="chart-card"><canvas id="regChart"></canvas></div>
-        </div>
+    
+    <!-- Link Generation -->
+    <div class="link-card">
+        <div class="link-title">🔗 Link generation</div>
+        <input type="text" class="link-input" id="affLink" readonly value="https://1xpartners.com/aff/4101738">
+        <button class="btn" onclick="copyLink()">Copy link</button>
+    </div>
+    
+    <!-- Brief summary -->
+    <div class="period-selector" id="periodSelector">
+        <button class="period-btn" data-period="today">Today</button>
+        <button class="period-btn" data-period="yesterday">Yesterday</button>
+        <button class="period-btn active" data-period="month">Current month</button>
+        <button class="period-btn" data-period="lastmonth">Last month</button>
+        <button class="period-btn" data-period="all">For all time</button>
+    </div>
+    
+    <div class="summary-grid" id="summaryGrid">
+        <div class="summary-item"><div class="summary-icon">⭐</div><div class="summary-value" id="depositCount">0</div><div class="summary-label">Number of deposits</div></div>
+        <div class="summary-item"><div class="summary-icon">🛒</div><div class="summary-value" id="regCount">0</div><div class="summary-label">Registrations</div></div>
+        <div class="summary-item"><div class="summary-icon">↗</div><div class="summary-value" id="directCount">0</div><div class="summary-label">Direct links</div></div>
+        <div class="summary-item"><div class="summary-icon">💵</div><div class="summary-value" id="commissionAmount">रु 0</div><div class="summary-label">Commission</div></div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="data-manager.js"></script>
 <script src="nav.js"></script>
 <script>
-    (async function() {
-        requireAuth();
+    let currentPeriod = 'month';
+    
+    async function loadStats() {
         await initDB();
-        await generateDemoData();
-
         const transactions = await getTransactions();
         const deposits = transactions.filter(t => t.type === 'Deposit' && t.status === 'SUCCESS');
-        const withdrawals = transactions.filter(t => t.type === 'Withdrawal' && t.status === 'SUCCESS');
-        const totalDeposit = deposits.reduce((s,t)=> s+t.amount, 0);
-        const totalWithdraw = withdrawals.reduce((s,t)=> s+t.amount, 0);
-        const netBalance = totalDeposit - totalWithdraw;
-
-        const today = new Date(); today.setHours(0,0,0,0);
-        const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayDeposit = deposits.filter(t => { let d = new Date(t.timestamp); return d >= yesterday && d < today; }).reduce((s,t)=>s+t.amount,0);
-        const thisMonth = deposits.filter(t => new Date(t.timestamp).getMonth() === new Date().getMonth()).reduce((s,t)=>s+t.amount,0);
-        const thirtyDaysAgo = new Date(); thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        const last30 = deposits.filter(t => new Date(t.timestamp) >= thirtyDaysAgo).reduce((s,t)=>s+t.amount,0);
-
-        document.getElementById('availBalance').innerText = formatCurrency(netBalance);
-        document.getElementById('yesterdayEarn').innerText = formatCurrency(yesterdayDeposit);
-        document.getElementById('monthEarn').innerText = formatCurrency(thisMonth);
-        document.getElementById('last30Earn').innerText = formatCurrency(last30);
-        document.getElementById('totalEarn').innerText = formatCurrency(totalDeposit);
-
-        function formatCurrency(amt) { return 'रु '+Math.round(amt).toLocaleString('en-IN'); }
-
-        // Simple charts
-        const ctx1 = document.getElementById('convChart').getContext('2d');
-        new Chart(ctx1, { type: 'line', data: { labels: ['Week 1','Week 2','Week 3','Week 4'], datasets: [{ label: 'Conversions', data: [12,19,15,27], borderColor: '#00c4ff', tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: true } });
-        const ctx2 = document.getElementById('regChart').getContext('2d');
-        new Chart(ctx2, { type: 'line', data: { labels: ['Week 1','Week 2','Week 3','Week 4'], datasets: [{ label: 'Registrations', data: [8,14,11,22], borderColor: '#f0b429', tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: true } });
-
-        initNav();
-    })();
+        
+        const now = new Date();
+        const todayStart = new Date(now.setHours(0,0,0,0));
+        const yesterdayStart = new Date(todayStart);
+        yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+        
+        let filtered = [];
+        if (currentPeriod === 'today') filtered = deposits.filter(t => new Date(t.timestamp) >= todayStart);
+        else if (currentPeriod === 'yesterday') filtered = deposits.filter(t => {
+            const d = new Date(t.timestamp);
+            return d >= yesterdayStart && d < todayStart;
+        });
+        else if (currentPeriod === 'month') filtered = deposits.filter(t => new Date(t.timestamp) >= monthStart);
+        else if (currentPeriod === 'lastmonth') filtered = deposits.filter(t => {
+            const d = new Date(t.timestamp);
+            return d >= lastMonthStart && d <= lastMonthEnd;
+        });
+        else filtered = deposits;
+        
+        const totalAmount = filtered.reduce((s,t) => s + t.amount, 0);
+        const uniquePlayers = new Set(filtered.map(t => t.playerId)).size;
+        // For demo, direct links = unique players, commission = totalAmount * 0.3 (example)
+        const commission = totalAmount * 0.3;
+        
+        document.getElementById('availableAmount').innerText = formatCurrency(totalAmount);
+        document.getElementById('depositCount').innerText = filtered.length;
+        document.getElementById('regCount').innerText = uniquePlayers;
+        document.getElementById('directCount').innerText = uniquePlayers;
+        document.getElementById('commissionAmount').innerText = formatCurrency(commission);
+    }
+    
+    function formatCurrency(amt) { return 'रु ' + Math.round(amt).toLocaleString('en-IN'); }
+    
+    function copyLink() {
+        const link = document.getElementById('affLink');
+        link.select();
+        document.execCommand('copy');
+        alert('Link copied!');
+    }
+    
+    // Period buttons
+    document.querySelectorAll('.period-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentPeriod = btn.dataset.period;
+            loadStats();
+        });
+    });
+    
+    requireAuth();
+    loadStats();
+    initNav();
 </script>
 </body>
 </html>
