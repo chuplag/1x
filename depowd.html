@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Finance - 1xPartners</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg:#13151f; --card:#1c1f2e; --card2:#22253a; --border:#2a2d3e; --accent:#f5a623; --green:#2ecc71; --red:#e74c3c; --text:#e8eaf0; --muted:#6b7094; --radius:14px; }
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-        body { background:var(--bg); font-family:'Roboto',sans-serif; color:var(--text); min-height:100vh; padding-top:60px; padding-bottom:80px; }
+        body { background:var(--bg); font-family:'Exo 2',sans-serif; color:var(--text); min-height:100vh; padding-top:60px; padding-bottom:80px; }
 
         .app-top-bar { position:fixed; top:0; left:0; right:0; height:60px; background:var(--card); display:flex; align-items:center; justify-content:space-between; padding:0 16px; border-bottom:1px solid var(--border); z-index:200; }
         .user-name { font-weight:700; font-size:16px; color:var(--accent); line-height:1.2; }
@@ -36,30 +36,39 @@
         .tab-bar {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            overflow: hidden;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 18px;
         }
         .tab-btn {
-            padding: 16px;
+            padding: 18px 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            font-weight: 700;
-            font-size: 15px;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 800;
+            font-size: 17px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
             cursor: pointer;
-            border: none;
-            background: transparent;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--card);
             color: var(--muted);
-            transition: background 0.15s, color 0.15s;
-            border-right: 1px solid var(--border);
+            transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
         }
-        .tab-btn:last-child { border-right: none; }
-        .tab-btn.active-dep { color: var(--green); background: rgba(46,204,113,0.08); }
-        .tab-btn.active-wd { color: var(--red); background: rgba(231,76,60,0.08); }
+        .tab-btn.active-dep {
+            color: var(--green);
+            background: rgba(46,204,113,0.10);
+            border-color: var(--green);
+            box-shadow: 0 0 18px rgba(46,204,113,0.15);
+        }
+        .tab-btn.active-wd {
+            color: var(--red);
+            background: rgba(231,76,60,0.10);
+            border-color: var(--red);
+            box-shadow: 0 0 18px rgba(231,76,60,0.15);
+        }
 
         /* Form panel */
         .panel { display: none; }
@@ -114,10 +123,10 @@
         .wd-icon { background: #2e1a1a; }
         .tx-badge { position: absolute; top: -4px; right: -4px; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; }
         .tx-info { flex: 1; min-width: 0; }
-        .tx-num { font-weight: 700; font-size: 15px; }
+        .tx-num { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: 0.3px; }
         .tx-pid { font-size: 12px; color: var(--muted); margin-top: 2px; }
         .tx-right { text-align: right; flex-shrink: 0; }
-        .tx-amount { font-weight: 700; font-size: 15px; }
+        .tx-amount { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 16px; letter-spacing: 0.3px; }
         .tx-amount.plus { color: var(--green); }
         .tx-amount.minus { color: var(--red); }
         .tx-time { font-size: 11px; color: var(--muted); margin-top: 3px; }
@@ -309,6 +318,22 @@
                 ✓ Record Withdrawal
             </button>
         </div>
+
+        <!-- Withdrawal-specific transaction history -->
+        <div class="section-header" style="margin-top:8px">
+            <div class="section-title">Withdrawal transactions</div>
+            <span class="record-count" id="wdRecordCount"></span>
+        </div>
+        <div class="search-row">
+            <input type="text" class="search-input" id="wdSearchInput" placeholder="Search player ID or TX ID...">
+            <button class="search-filter-btn" onclick="applyWdSearch()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            </button>
+        </div>
+        <div class="tx-list" id="wdTxList">
+            <div class="empty-state">Loading...</div>
+        </div>
+        <button class="load-more" id="wdLoadMoreBtn" style="display:none" onclick="loadMoreWd()">Load more</button>
     </div>
 
     <!-- Transaction history -->
@@ -357,6 +382,7 @@
     let agents = [];
     let myAgentId = null;
     let visibleCount = 30;
+    let wdVisibleCount = 30;
     let currentEditId = null;
     let activeTab = 'deposit';
 
@@ -453,6 +479,45 @@
         renderTxList(filtered);
     }
 
+    function applyWdSearch() {
+        const q = document.getElementById('wdSearchInput').value.trim().toLowerCase();
+        const wds = allTransactions.filter(t => t.type === 'Withdrawal');
+        const filtered = q ? wds.filter(t =>
+            (t.playerId && t.playerId.toString().includes(q)) ||
+            (t.txId && t.txId.toLowerCase().includes(q))
+        ) : wds;
+        renderWdTxList(filtered);
+    }
+
+    function renderWdTxList(txs) {
+        const list = document.getElementById('wdTxList');
+        document.getElementById('wdRecordCount').innerText = `${txs.length} records`;
+        const shown = txs.slice(0, wdVisibleCount);
+        if (!shown.length) { list.innerHTML = '<div class="empty-state">No withdrawal transactions found</div>'; document.getElementById('wdLoadMoreBtn').style.display = 'none'; return; }
+        list.innerHTML = shown.map(tx => `
+            <div class="tx-item" onclick="openEdit(${tx.id})">
+                <div class="tx-icon-wrap">
+                    <div class="tx-icon wd-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="#e74c3c"><path d="M5 15h4v6h6v-6h4l-7-7-7 7zM5 4v2h14V4H5z"/></svg>
+                    </div>
+                    <div class="tx-badge">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="#0a0c12"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+                    </div>
+                </div>
+                <div class="tx-info">
+                    <div class="tx-num">${formatTxNum(tx.txId)}</div>
+                    <div class="tx-pid">ID ${tx.playerId || '-'}</div>
+                </div>
+                <div class="tx-right">
+                    <div class="tx-amount minus">-${tx.amount.toFixed(2)} Re</div>
+                    <div class="tx-time">${formatTime(tx.timestamp)}</div>
+                </div>
+            </div>`).join('');
+        document.getElementById('wdLoadMoreBtn').style.display = txs.length > wdVisibleCount ? 'block' : 'none';
+    }
+
+    function loadMoreWd() { wdVisibleCount += 30; applyWdSearch(); }
+
     function renderTxList(txs) {
         const list = document.getElementById('txList');
         document.getElementById('recordCount').innerText = `${txs.length} records`;
@@ -487,6 +552,7 @@
     async function loadTxList() {
         allTransactions = await getTransactions();
         applySearch();
+        applyWdSearch();
     }
 
     function loadMore() { visibleCount += 30; applySearch(); }
@@ -531,6 +597,7 @@
     // Close modal on backdrop click
     document.getElementById('editModal').addEventListener('click', e => { if (e.target === document.getElementById('editModal')) closeModal(); });
     document.getElementById('searchInput').addEventListener('keypress', e => { if (e.key === 'Enter') applySearch(); });
+    document.getElementById('wdSearchInput').addEventListener('keypress', e => { if (e.key === 'Enter') applyWdSearch(); });
 
     (async function() {
         requireAuth();
