@@ -1,138 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>1xPartners - Main Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #0f1117; --sidebar-bg: #161a24; --card-bg: #1a1f2e; --border: #252b3b;
-    --accent: #1a73e8; --accent2: #00c4ff; --yellow: #f0b429; --green: #22c55e;
-    --red: #ef4444; --orange: #ff6b1a; --text: #e2e8f0; --muted: #7a8599;
-  }
-  body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; font-size: 14px; position: relative; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>1xPartners - Main Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0f1117; --sidebar-bg: #161a24; --card-bg: #1a1f2e; --border: #252b3b;
+            --accent: #1a73e8; --accent2: #00c4ff; --yellow: #f0b429; --green: #22c55e;
+            --red: #ef4444; --orange: #ff6b1a; --text: #e2e8f0; --muted: #7a8599;
+        }
+        body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; font-size: 14px; position: relative; }
 
-  /* SIDEBAR */
-  .sidebar { width: 260px; flex-shrink: 0; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding-bottom: 24px; overflow-y: auto; transition: transform 0.3s ease; z-index: 1000; }
-  .logo { padding: 18px 20px; border-bottom: 1px solid var(--border); margin-bottom: 6px; }
-  .logo span { font-family: 'Exo 2', sans-serif; font-weight: 800; font-size: 22px; color: var(--orange); letter-spacing: 1px; }
-  .logo span em { color: var(--text); font-style: normal; }
-  .nav-section { padding: 8px 0; }
-  .nav-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; color: var(--muted); padding: 10px 20px 5px; text-transform: uppercase; }
-  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 20px; color: var(--muted); cursor: pointer; transition: all .18s; border-left: 3px solid transparent; font-size: 14px; text-decoration: none; }
-  .nav-item:hover { color: var(--text); background: rgba(255,255,255,.04); }
-  .nav-item.active { color: var(--accent2); background: rgba(0,196,255,.07); border-left-color: var(--accent2); }
-  .nav-item svg { width: 18px; height: 18px; }
-  .nav-badge { margin-left: auto; background: var(--red); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+        /* SIDEBAR (desktop) */
+        .sidebar { width: 260px; flex-shrink: 0; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding-bottom: 24px; overflow-y: auto; transition: transform 0.3s ease; z-index: 1000; }
+        .logo { padding: 18px 20px; border-bottom: 1px solid var(--border); margin-bottom: 6px; }
+        .logo span { font-family: 'Exo 2', sans-serif; font-weight: 800; font-size: 22px; color: var(--orange); letter-spacing: 1px; }
+        .logo span em { color: var(--text); font-style: normal; }
+        .nav-section { padding: 8px 0; }
+        .nav-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; color: var(--muted); padding: 10px 20px 5px; text-transform: uppercase; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 20px; color: var(--muted); text-decoration: none; transition: all .18s; border-left: 3px solid transparent; font-size: 14px; }
+        .nav-item:hover { color: var(--text); background: rgba(255,255,255,.04); }
+        .nav-item.active { color: var(--accent2); background: rgba(0,196,255,.07); border-left-color: var(--accent2); }
+        .nav-item svg { width: 18px; height: 18px; }
+        .nav-badge { margin-left: auto; background: var(--red); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
 
-  /* MOBILE HEADER */
-  .mobile-header { display: none; background: var(--card-bg); padding: 12px 16px; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 999; }
-  .hamburger { background: none; border: none; color: var(--text); font-size: 24px; cursor: pointer; }
-  .mobile-logo { font-family: 'Exo 2', sans-serif; font-weight: 800; font-size: 18px; color: var(--orange); }
-  .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 998; display: none; }
-  .overlay.active { display: block; }
+        /* MOBILE HEADER */
+        .mobile-header { display: none; background: var(--card-bg); padding: 12px 16px; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 999; }
+        .hamburger { background: none; border: none; color: var(--text); font-size: 26px; cursor: pointer; }
+        .mobile-logo { font-family: 'Exo 2', sans-serif; font-weight: 800; font-size: 18px; color: var(--orange); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 998; display: none; }
+        .overlay.active { display: block; }
 
-  /* MAIN CONTENT */
-  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
-  .topbar { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-  .topbar-title { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 18px; display: flex; align-items: center; gap: 10px; color: var(--accent2); }
-  .btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted); }
-  .aff-id { font-size: 13px; }
-  .stat-strip { display: grid; grid-template-columns: repeat(5, 1fr); border-bottom: 1px solid var(--border); }
-  .stat-card { padding: 20px; border-right: 1px solid var(--border); }
-  .stat-amount { font-family: 'Exo 2', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 6px; }
-  .stat-label { font-size: 12px; text-transform: uppercase; color: var(--muted); }
-  .content { padding: 24px; flex: 1; }
-  .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
-  .qa-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; text-decoration: none; transition: transform 0.2s; }
-  .qa-card:hover { transform: translateY(-2px); }
-  .qa-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
-  .qa-icon.dep { background: rgba(34,197,94,.12); }
-  .qa-label { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 14px; color: var(--text); }
-  .filter-bar { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; align-items: flex-end; }
-  .select-wrap select { background: var(--card-bg); border: 1px solid var(--border); padding: 8px 32px 8px 12px; border-radius: 8px; color: var(--text); font-size: 13px; }
-  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .chart-card { background: var(--card-bg); border-radius: 12px; padding: 20px; }
-  @media (max-width: 768px) {
-    .sidebar { position: fixed; left: 0; top: 0; height: 100%; transform: translateX(-100%); width: 260px; z-index: 1001; }
-    .sidebar.open { transform: translateX(0); }
-    .mobile-header { display: flex; }
-    .main { width: 100%; }
-    .stat-strip { grid-template-columns: repeat(2, 1fr); }
-    .quick-actions { grid-template-columns: 1fr; }
-    .charts-grid { grid-template-columns: 1fr; }
-    .topbar { flex-direction: column; height: auto; padding: 12px; gap: 8px; }
-    .stat-card { padding: 12px; }
-    .stat-amount { font-size: 22px; }
-  }
-  @media (max-width: 480px) {
-    .content { padding: 16px; }
-    .filter-bar { flex-direction: column; align-items: stretch; }
-  }
-</style>
+        /* MAIN CONTENT */
+        .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+        .topbar { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+        .topbar-title { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 18px; display: flex; align-items: center; gap: 10px; color: var(--accent2); }
+        .btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+        .aff-id { font-size: 13px; }
+        .stat-strip { display: grid; grid-template-columns: repeat(5, 1fr); border-bottom: 1px solid var(--border); }
+        .stat-card { padding: 20px; border-right: 1px solid var(--border); }
+        .stat-amount { font-family: 'Exo 2', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+        .stat-label { font-size: 12px; text-transform: uppercase; color: var(--muted); }
+        .content { padding: 24px; flex: 1; }
+        .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+        .qa-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; text-decoration: none; transition: transform 0.2s; }
+        .qa-card:hover { transform: translateY(-2px); }
+        .qa-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: rgba(34,197,94,.12); }
+        .qa-label { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 14px; color: var(--text); }
+        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .chart-card { background: var(--card-bg); border-radius: 12px; padding: 20px; }
+        canvas { max-height: 200px; width: 100%; }
+
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; left: 0; top: 0; height: 100%; transform: translateX(-100%); width: 260px; z-index: 1001; }
+            .sidebar.open { transform: translateX(0); }
+            .mobile-header { display: flex; }
+            .main { width: 100%; }
+            .stat-strip { grid-template-columns: repeat(2, 1fr); }
+            .quick-actions { grid-template-columns: 1fr; }
+            .charts-grid { grid-template-columns: 1fr; }
+            .topbar { flex-direction: column; height: auto; padding: 12px; gap: 8px; }
+            .stat-card { padding: 12px; }
+            .stat-amount { font-size: 22px; }
+        }
+        @media (max-width: 480px) {
+            .content { padding: 16px; }
+        }
+    </style>
 </head>
 <body>
 <div class="main">
-  <header class="topbar">
-    <div class="topbar-title">📊 Main Dashboard</div>
-    <div><button class="btn btn-primary" id="refreshBtn">↻ Refresh</button></div>
-  </header>
-  <div class="stat-strip" id="statStrip">
-    <div class="stat-card"><div class="stat-amount" id="availBalance">रु 0</div><div class="stat-label">Available to withdraw</div></div>
-    <div class="stat-card"><div class="stat-amount" id="yesterdayEarn">रु 0</div><div class="stat-label">Yesterday</div></div>
-    <div class="stat-card"><div class="stat-amount" id="monthEarn">रु 0</div><div class="stat-label">Current month</div></div>
-    <div class="stat-card"><div class="stat-amount" id="last30Earn">रु 0</div><div class="stat-label">30 Days</div></div>
-    <div class="stat-card"><div class="stat-amount" id="totalEarn">रु 0</div><div class="stat-label">Total</div></div>
-  </div>
-  <div class="content">
-    <div class="quick-actions">
-      <a href="depowd.html" class="qa-card"><div class="qa-icon dep">💰</div><div><div class="qa-label">Deposit Funds</div></div></a>
-      <a href="depowd.html" class="qa-card"><div class="qa-icon dep">🏦</div><div><div class="qa-label">Withdraw</div></div></a>
-      <a href="withdr.html" class="qa-card"><div class="qa-icon dep">⚠️</div><div><div class="qa-label">Withdrawal Problem</div></div></a>
+    <header class="topbar">
+        <div class="topbar-title">📊 Main Dashboard</div>
+        <div><button class="btn btn-primary" id="refreshBtn">↻ Refresh</button></div>
+    </header>
+    <div class="stat-strip" id="statStrip">
+        <div class="stat-card"><div class="stat-amount" id="availBalance">रु 0</div><div class="stat-label">Available to withdraw</div></div>
+        <div class="stat-card"><div class="stat-amount" id="yesterdayEarn">रु 0</div><div class="stat-label">Yesterday</div></div>
+        <div class="stat-card"><div class="stat-amount" id="monthEarn">रु 0</div><div class="stat-label">Current month</div></div>
+        <div class="stat-card"><div class="stat-amount" id="last30Earn">रु 0</div><div class="stat-label">30 Days</div></div>
+        <div class="stat-card"><div class="stat-amount" id="totalEarn">रु 0</div><div class="stat-label">Total</div></div>
     </div>
-    <div class="charts-grid">
-      <div class="chart-card"><canvas id="convChart" height="180"></canvas></div>
-      <div class="chart-card"><canvas id="regChart" height="180"></canvas></div>
+    <div class="content">
+        <div class="quick-actions">
+            <a href="depowd.html" class="qa-card"><div class="qa-icon">💰</div><div><div class="qa-label">Deposit Funds</div></div></a>
+            <a href="depowd.html" class="qa-card"><div class="qa-icon">🏦</div><div><div class="qa-label">Withdraw</div></div></a>
+            <a href="withdr.html" class="qa-card"><div class="qa-icon">⚠️</div><div><div class="qa-label">Withdrawal Problem</div></div></a>
+        </div>
+        <div class="charts-grid">
+            <div class="chart-card"><canvas id="convChart"></canvas></div>
+            <div class="chart-card"><canvas id="regChart"></canvas></div>
+        </div>
     </div>
-  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="data-manager.js"></script>
 <script src="nav.js"></script>
 <script>
-  (async function() {
-    requireAuth(); // from data-manager.js
-    await initDB();
-    await generateDemoData();
-    const transactions = await getTransactions();
-    const deposits = transactions.filter(t => t.type === 'Deposit' && t.status === 'SUCCESS');
-    const totalDeposit = deposits.reduce((s,t)=> s+t.amount, 0);
-    const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1); yesterday.setHours(0,0,0,0);
-    const today = new Date(); today.setHours(0,0,0,0);
-    const yesterdayDeposit = deposits.filter(t => { let d=new Date(t.timestamp); return d>=yesterday && d<today; }).reduce((s,t)=>s+t.amount,0);
-    const thisMonth = deposits.filter(t => new Date(t.timestamp).getMonth() === new Date().getMonth()).reduce((s,t)=>s+t.amount,0);
-    const thirtyDaysAgo = new Date(); thirtyDaysAgo.setDate(thirtyDaysAgo.getDate()-30);
-    const last30 = deposits.filter(t => new Date(t.timestamp) >= thirtyDaysAgo).reduce((s,t)=>s+t.amount,0);
-    document.getElementById('availBalance').innerText = formatCurrency(totalDeposit - deposits.filter(t=>t.type==='Withdrawal').reduce((s,t)=>s+t.amount,0));
-    document.getElementById('yesterdayEarn').innerText = formatCurrency(yesterdayDeposit);
-    document.getElementById('monthEarn').innerText = formatCurrency(thisMonth);
-    document.getElementById('last30Earn').innerText = formatCurrency(last30);
-    document.getElementById('totalEarn').innerText = formatCurrency(totalDeposit);
+    (async function() {
+        requireAuth();
+        await initDB();
+        await generateDemoData();
 
-    function formatCurrency(amt) { return 'रु '+Math.round(amt).toLocaleString('en-IN'); }
+        const transactions = await getTransactions();
+        const deposits = transactions.filter(t => t.type === 'Deposit' && t.status === 'SUCCESS');
+        const withdrawals = transactions.filter(t => t.type === 'Withdrawal' && t.status === 'SUCCESS');
+        const totalDeposit = deposits.reduce((s,t)=> s+t.amount, 0);
+        const totalWithdraw = withdrawals.reduce((s,t)=> s+t.amount, 0);
+        const netBalance = totalDeposit - totalWithdraw;
 
-    // Charts
-    const labels = ['Week 1','Week 2','Week 3','Week 4'];
-    new Chart(document.getElementById('convChart'), { type:'line', data:{ labels, datasets:[{ label:'Conversions', data:[12,19,15,27], borderColor:'#00c4ff', tension:0.4 }] }, options:{ responsive:true, maintainAspectRatio:true } });
-    new Chart(document.getElementById('regChart'), { type:'line', data:{ labels, datasets:[{ label:'Registrations', data:[8,14,11,22], borderColor:'#f0b429', tension:0.4 }] }, options:{ responsive:true, maintainAspectRatio:true } });
+        const today = new Date(); today.setHours(0,0,0,0);
+        const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayDeposit = deposits.filter(t => { let d = new Date(t.timestamp); return d >= yesterday && d < today; }).reduce((s,t)=>s+t.amount,0);
+        const thisMonth = deposits.filter(t => new Date(t.timestamp).getMonth() === new Date().getMonth()).reduce((s,t)=>s+t.amount,0);
+        const thirtyDaysAgo = new Date(); thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const last30 = deposits.filter(t => new Date(t.timestamp) >= thirtyDaysAgo).reduce((s,t)=>s+t.amount,0);
 
-    initNav();
-  })();
+        document.getElementById('availBalance').innerText = formatCurrency(netBalance);
+        document.getElementById('yesterdayEarn').innerText = formatCurrency(yesterdayDeposit);
+        document.getElementById('monthEarn').innerText = formatCurrency(thisMonth);
+        document.getElementById('last30Earn').innerText = formatCurrency(last30);
+        document.getElementById('totalEarn').innerText = formatCurrency(totalDeposit);
+
+        function formatCurrency(amt) { return 'रु '+Math.round(amt).toLocaleString('en-IN'); }
+
+        // Simple charts
+        const ctx1 = document.getElementById('convChart').getContext('2d');
+        new Chart(ctx1, { type: 'line', data: { labels: ['Week 1','Week 2','Week 3','Week 4'], datasets: [{ label: 'Conversions', data: [12,19,15,27], borderColor: '#00c4ff', tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: true } });
+        const ctx2 = document.getElementById('regChart').getContext('2d');
+        new Chart(ctx2, { type: 'line', data: { labels: ['Week 1','Week 2','Week 3','Week 4'], datasets: [{ label: 'Registrations', data: [8,14,11,22], borderColor: '#f0b429', tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: true } });
+
+        initNav();
+    })();
 </script>
 </body>
 </html>
