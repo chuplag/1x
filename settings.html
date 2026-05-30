@@ -4,52 +4,249 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Settings - 1xPartners</title>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background: #0a0c12; font-family: 'Exo 2', sans-serif; color: #e8eaf0; padding-bottom: 70px; }
-        .app-top-bar { background: #121520; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #252a3a; }
-        .user-name { font-weight: 700; font-size: 18px; color: #f5a623; }
-        .aff-id { font-size: 12px; color: #9095aa; margin-top: 4px; }
-        .main { padding: 20px; max-width: 600px; margin: 0 auto; }
-        .settings-group { margin-bottom: 24px; }
-        .settings-title { color: #f5a623; font-size: 14px; margin-bottom: 12px; letter-spacing: 0.5px; }
-        .setting-item { background: #121520; border-radius: 12px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #252a3a; margin-bottom: 8px; }
-        .setting-label { font-weight: 500; }
-        .setting-status { color: #9095aa; font-size: 13px; }
-        .setting-status.enabled { color: #22c55e; }
-        .version { text-align: center; margin-top: 30px; color: #9095aa; font-size: 12px; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #121520; display: flex; justify-content: space-around; padding: 10px 0 16px; border-top: 1px solid #252a3a; }
-        .bottom-nav .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #9095aa; font-size: 11px; gap: 4px; }
-        .bottom-nav .nav-item.active { color: #f5a623; }
-        .nav-icon { font-size: 22px; }
-        .update-btn { background: #f5a623; border: none; padding: 10px; border-radius: 10px; width: 100%; margin-top: 16px; font-weight: 600; cursor: pointer; }
+        :root { --bg:#13151f; --card:#1c1f2e; --card2:#22253a; --border:#2a2d3e; --accent:#f5a623; --green:#2ecc71; --red:#e74c3c; --text:#e8eaf0; --muted:#6b7094; --radius:14px; }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        body { background:var(--bg); font-family:'Roboto',sans-serif; color:var(--text); min-height:100vh; padding-top:60px; padding-bottom:80px; }
+
+        .app-top-bar { position:fixed; top:0; left:0; right:0; height:60px; background:var(--card); display:flex; align-items:center; justify-content:space-between; padding:0 16px; border-bottom:1px solid var(--border); z-index:200; }
+        .user-name { font-weight:700; font-size:16px; color:var(--accent); line-height:1.2; }
+        .aff-id { font-size:11px; color:var(--muted); }
+        .icon-btn { background:none; border:none; cursor:pointer; color:var(--muted); display:flex; padding:6px; }
+
+        .main { padding:16px; max-width:600px; margin:0 auto; }
+
+        /* Profile card */
+        .profile-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .profile-avatar {
+            width: 60px; height: 60px;
+            border-radius: 16px;
+            background: rgba(245,166,35,0.12);
+            border: 2px solid rgba(245,166,35,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 26px; font-weight: 900; color: var(--accent);
+            flex-shrink: 0;
+        }
+        .profile-name { font-size: 20px; font-weight: 900; }
+        .profile-role { font-size: 12px; color: var(--accent); margin-top: 3px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .profile-id { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+        /* Settings groups */
+        .settings-section { margin-bottom: 20px; }
+        .settings-section-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 8px; padding-left: 4px; }
+        .settings-group { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+        .setting-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+        .setting-item:last-child { border-bottom: none; }
+        .setting-item:active { background: var(--card2); }
+        .setting-left { display: flex; align-items: center; gap: 12px; }
+        .setting-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .si-blue { background: rgba(52,152,219,0.15); }
+        .si-green { background: rgba(46,204,113,0.15); }
+        .si-orange { background: rgba(245,166,35,0.15); }
+        .si-red { background: rgba(231,76,60,0.15); }
+        .si-purple { background: rgba(155,89,182,0.15); }
+        .setting-label { font-size: 15px; font-weight: 500; }
+        .setting-value { font-size: 13px; color: var(--muted); margin-top: 1px; }
+        .setting-right { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+
+        /* Toggle */
+        .toggle { width: 44px; height: 24px; border-radius: 12px; background: var(--border); position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+        .toggle.on { background: var(--green); }
+        .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: white; transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+        .toggle.on::after { transform: translateX(20px); }
+
+        /* Chevron */
+        .chevron { opacity: 0.4; }
+
+        /* Aff link card */
+        .link-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
+        .link-card-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; font-weight: 700; }
+        .link-row { display: flex; align-items: center; gap: 10px; }
+        .link-val { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--accent); font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .copy-btn { background: var(--accent); color: #0a0c12; border: none; border-radius: 10px; padding: 12px 16px; font-weight: 700; font-size: 13px; cursor: pointer; flex-shrink: 0; }
+
+        /* Version */
+        .version-text { text-align: center; color: var(--muted); font-size: 12px; margin-top: 10px; }
+
+        /* Logout btn */
+        .logout-btn { width: 100%; background: rgba(231,76,60,0.1); border: 1px solid rgba(231,76,60,0.3); color: var(--red); border-radius: var(--radius); padding: 16px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+        .logout-btn:active { opacity: 0.8; }
+
+        .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:var(--card); display:flex; justify-content:space-around; align-items:stretch; padding:8px 0 12px; border-top:1px solid var(--border); z-index:200; }
+        .bottom-nav .nav-item { display:flex; flex-direction:column; align-items:center; gap:3px; text-decoration:none; color:var(--muted); font-size:10px; font-weight:500; flex:1; padding:4px 0; }
+        .bottom-nav .nav-item.active { color:var(--accent); }
+        .nav-icon { display:flex; }
     </style>
 </head>
 <body>
 <div class="main">
-    <div class="settings-group">
-        <div class="settings-title">Security</div>
-        <div class="setting-item"><span class="setting-label">Authenticator</span><span class="setting-status">Disabled</span></div>
-        <div class="setting-item"><span class="setting-label">PIN code and biometrics</span><span class="setting-status enabled">Enabled</span></div>
+    <!-- Profile -->
+    <div class="profile-card">
+        <div class="profile-avatar" id="profileInitial">A</div>
+        <div>
+            <div class="profile-name" id="profileName">Admin</div>
+            <div class="profile-role">👑 Administrator</div>
+            <div class="profile-id">Aff ID: 4101738</div>
+        </div>
     </div>
-    <div class="settings-group">
-        <div class="settings-title">App settings</div>
-        <div class="setting-item"><span class="setting-label">Push notifications</span><span class="setting-status">On</span></div>
-        <div class="setting-item"><span class="setting-label">Background</span><span class="setting-status">Dark</span></div>
-        <div class="setting-item"><span class="setting-label">Report settings</span><span class="setting-status">Default</span></div>
-        <div class="setting-item"><span class="setting-label">Marketing settings</span><span class="setting-status">Default</span></div>
-        <div class="setting-item"><span class="setting-label">Main page settings</span><span class="setting-status">Default</span></div>
+
+    <!-- Affiliate link -->
+    <div class="link-card">
+        <div class="link-card-label">My Affiliate Link</div>
+        <div class="link-row">
+            <div class="link-val">https://1xpartners.com/aff/4101738</div>
+            <button class="copy-btn" onclick="copyLink()">Copy</button>
+        </div>
     </div>
-    <div class="version">App version: xbet-v32.0.210</div>
-    <button class="update-btn" onclick="alert('Demo: Update check')">Update </button>
+
+    <!-- Security -->
+    <div class="settings-section">
+        <div class="settings-section-label">Security</div>
+        <div class="settings-group">
+            <div class="setting-item">
+                <div class="setting-left">
+                    <div class="setting-icon si-blue">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#3498db"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                    </div>
+                    <div>
+                        <div class="setting-label">Authenticator</div>
+                        <div class="setting-value">Two-factor authentication</div>
+                    </div>
+                </div>
+                <div class="setting-right">
+                    <div class="toggle" onclick="this.classList.toggle('on')"></div>
+                </div>
+            </div>
+            <div class="setting-item">
+                <div class="setting-left">
+                    <div class="setting-icon si-green">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#2ecc71"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                    </div>
+                    <div>
+                        <div class="setting-label">PIN & Biometrics</div>
+                        <div class="setting-value">Enabled</div>
+                    </div>
+                </div>
+                <div class="setting-right">
+                    <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="settings-section">
+        <div class="settings-section-label">Notifications</div>
+        <div class="settings-group">
+            <div class="setting-item">
+                <div class="setting-left">
+                    <div class="setting-icon si-orange">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5a623"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                    </div>
+                    <div>
+                        <div class="setting-label">Push Notifications</div>
+                        <div class="setting-value">Deposits & Withdrawals</div>
+                    </div>
+                </div>
+                <div class="setting-right">
+                    <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App -->
+    <div class="settings-section">
+        <div class="settings-section-label">App</div>
+        <div class="settings-group">
+            <div class="setting-item">
+                <div class="setting-left">
+                    <div class="setting-icon si-purple">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#9b59b6"><path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm1 14h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                    </div>
+                    <div>
+                        <div class="setting-label">App Version</div>
+                        <div class="setting-value">xbet-v32.0.210</div>
+                    </div>
+                </div>
+                <div class="setting-right">
+                    <span style="font-size:12px;color:var(--green);font-weight:700">Up to date</span>
+                </div>
+            </div>
+            <div class="setting-item" onclick="clearData()">
+                <div class="setting-left">
+                    <div class="setting-icon si-red">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#e74c3c"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                    </div>
+                    <div>
+                        <div class="setting-label">Clear Demo Data</div>
+                        <div class="setting-value">Reset all transactions</div>
+                    </div>
+                </div>
+                <div class="setting-right chevron">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout -->
+    <button class="logout-btn" onclick="logout()">
+        Sign Out
+    </button>
+    <div class="version-text">1xPartners Portal · Admin Edition</div>
 </div>
+
 <script src="data-manager.js"></script>
 <script src="nav.js"></script>
 <script>
     requireAuth();
+    const userName = localStorage.getItem('1xpartners_user') || 'Admin';
+    document.getElementById('profileName').innerText = userName === 'knocker' ? 'Knocker (Admin)' : userName;
+    document.getElementById('profileInitial').innerText = (userName === 'knocker' ? 'K' : userName[0]).toUpperCase();
+
+    function copyLink() {
+        navigator.clipboard.writeText('https://1xpartners.com/aff/4101738')
+            .then(() => alert('Link copied!'))
+            .catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = 'https://1xpartners.com/aff/4101738';
+                document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+                alert('Link copied!');
+            });
+    }
+
+    async function clearData() {
+        if (!confirm('This will delete ALL demo data. Are you sure?')) return;
+        const db = await initDB();
+        const stores = ['transactions', 'agents', 'balanceLogs'];
+        for (const store of stores) {
+            await new Promise((res, rej) => {
+                const tx = db.transaction(store, 'readwrite');
+                const req = tx.objectStore(store).clear();
+                req.onsuccess = res; req.onerror = rej;
+            });
+        }
+        alert('Data cleared. Reload to regenerate demo data.');
+    }
+
     initNav();
-    document.querySelectorAll('.bottom-nav .nav-item')[3].classList.add('active');
 </script>
 </body>
 </html>
