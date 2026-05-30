@@ -10,7 +10,7 @@ function isAuthenticated() {
     try {
         const decoded = atob(session);
         const [user, pass] = decoded.split(':');
-        return (user === 'prasanna' && pass === 'root@knocker') || (user === 'knocker' && pass === 'Knocker99@');
+        return (user === 'knocker' && pass === 'Knocker99@');
     } catch(e) { return false; }
 }
 
@@ -102,6 +102,20 @@ async function getAgentById(id) {
     const db = await initDB();
     return new Promise((resolve, reject) => {
         const request = db.transaction('agents', 'readonly').objectStore('agents').get(id);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+// ---------- TRANSACTION OPERATIONS ----------
+async function addTransaction(tx) {
+    const db = await initDB();
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('transactions', 'readwrite');
+        const request = transaction.objectStore('transactions').add({
+            ...tx,
+            createdAt: new Date().toISOString()
+        });
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => reject(request.error);
     });
