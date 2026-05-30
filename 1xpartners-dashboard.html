@@ -277,5 +277,44 @@
     loadDashboard();
     initNav();
 </script>
+     <script>
+        // --- Helper: check if already logged in ---
+        function isAuthenticated() {
+            const session = localStorage.getItem('1xpartners_session');
+            if (!session) return false;
+            try {
+                const decoded = atob(session);
+                const [user, pass] = decoded.split(':');
+                return (user === 'prasanna' && pass === 'root@knocker') ||
+                       (user === 'knocker' && pass === 'root@knocker');
+            } catch(e) { return false; }
+        }
+
+        // If already logged in, go straight to dashboard
+        if (isAuthenticated()) {
+            window.location.replace('1xpartners-dashboard.html');
+        }
+
+        // --- Login logic ---
+        function doLogin() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+
+            // Accept both 'prasanna' and 'knocker' with same password 'root@knocker'
+            if ((user === 'prasanna' || user === 'knocker') && pass === 'root@knocker') {
+                localStorage.setItem('1xpartners_session', btoa(user + ':' + pass));
+                localStorage.setItem('1xpartners_user', user);
+                window.location.href = '1xpartners-dashboard.html';
+            } else {
+                const err = document.getElementById('errorMsg');
+                err.style.display = 'block';
+                setTimeout(() => err.style.display = 'none', 3000);
+            }
+        }
+
+        document.getElementById('loginBtn').addEventListener('click', doLogin);
+        document.getElementById('password').addEventListener('keypress', e => { if (e.key === 'Enter') doLogin(); });
+        document.getElementById('username').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('password').focus(); });
+    </script>
 </body>
 </html>
