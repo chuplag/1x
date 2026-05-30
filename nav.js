@@ -1,6 +1,6 @@
 // nav.js - Unified Navigation with Bottom Tab Bar
 function initNav() {
-    // Remove old sidebar if exists
+    // Remove old sidebar if exists or
     const oldSidebar = document.querySelector('.sidebar');
     if (oldSidebar) oldSidebar.remove();
     const oldMobileHeader = document.querySelector('.mobile-header');
