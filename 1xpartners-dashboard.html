@@ -4,158 +4,160 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>1xPartners - Home</title>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            background: #0a0c12;
-            font-family: 'Exo 2', sans-serif;
-            color: #e8eaf0;
-            padding-bottom: 70px;
-        }
-        /* Top Bar */
-        .app-top-bar {
-            background: #121520;
-            padding: 14px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #252a3a;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .user-name { font-weight: 700; font-size: 18px; color: #f5a623; }
-        .aff-id { font-size: 12px; color: #9095aa; margin-top: 4px; }
-        .icon-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: #9095aa; }
+        :root { --bg:#13151f; --card:#1c1f2e; --card2:#22253a; --border:#2a2d3e; --accent:#f5a623; --green:#2ecc71; --red:#e74c3c; --text:#e8eaf0; --muted:#6b7094; --radius:14px; }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        body { background:var(--bg); font-family:'Roboto',sans-serif; color:var(--text); min-height:100vh; padding-top:60px; padding-bottom:80px; }
         
-        /* Main Content */
-        .main { padding: 20px; max-width: 600px; margin: 0 auto; }
-        
-        /* Stats Card */
-        .stats-card {
-            background: #121520;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #252a3a;
+        .app-top-bar { position:fixed; top:0; left:0; right:0; height:60px; background:var(--card); display:flex; align-items:center; justify-content:space-between; padding:0 16px; border-bottom:1px solid var(--border); z-index:200; }
+        .user-name { font-weight:700; font-size:16px; color:var(--accent); line-height:1.2; }
+        .aff-id { font-size:11px; color:var(--muted); }
+        .icon-btn { background:none; border:none; cursor:pointer; color:var(--muted); display:flex; padding:6px; }
+
+        .main { padding:16px; max-width:600px; margin:0 auto; }
+
+        /* Balance Card */
+        .balance-card {
+            background: linear-gradient(135deg, #1c1f2e 0%, #22253a 100%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px 20px;
+            margin-bottom: 12px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
-        .stats-label { font-size: 13px; color: #9095aa; text-transform: uppercase; letter-spacing: 0.5px; }
-        .stats-amount { font-family: 'Rajdhani', sans-serif; font-size: 36px; font-weight: 700; color: #f5a623; margin: 8px 0; }
-        
-        /* Link Generation Card */
-        .link-card {
-            background: #121520;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 20px;
-            border: 1px solid #252a3a;
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -30px; right: -30px;
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            background: rgba(245,166,35,0.06);
         }
-        .link-title { font-weight: 600; margin-bottom: 12px; color: #f5a623; }
-        .link-input { width: 100%; background: #0a0c12; border: 1px solid #252a3a; border-radius: 10px; padding: 12px; color: white; font-size: 14px; }
-        .btn { background: #f5a623; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; margin-top: 10px; cursor: pointer; width: 100%; }
-        
-        /* Summary Grid */
-        .summary-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .summary-item {
-            background: #121520;
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-            border: 1px solid #252a3a;
-        }
-        .summary-icon { font-size: 24px; margin-bottom: 8px; }
-        .summary-value { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; color: #f5a623; }
-        .summary-label { font-size: 11px; color: #9095aa; margin-top: 4px; }
-        
-        /* Period Selector */
-        .period-selector {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        .period-btn {
-            background: transparent;
-            border: 1px solid #252a3a;
-            padding: 8px 16px;
-            border-radius: 20px;
-            color: #9095aa;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        .period-btn.active {
-            background: #f5a623;
-            color: #0a0c12;
-            border-color: #f5a623;
-        }
-        
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #121520;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0 16px;
-            border-top: 1px solid #252a3a;
-            z-index: 100;
-        }
-        .bottom-nav .nav-item {
+        .balance-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .balance-amount { font-size: 42px; font-weight: 900; color: var(--text); line-height: 1; margin-bottom: 4px; }
+        .balance-amount span { color: var(--accent); }
+        .balance-currency { font-size: 14px; color: var(--muted); }
+
+        /* Deposit / Withdraw buttons */
+        .dw-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .dw-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 8px;
+            cursor: pointer;
             text-decoration: none;
-            color: #9095aa;
-            font-size: 11px;
-            gap: 4px;
+            transition: background 0.15s;
         }
-        .bottom-nav .nav-item.active { color: #f5a623; }
-        .nav-icon { font-size: 22px; }
-        
-        @media (max-width: 480px) {
-            .main { padding: 16px; }
-            .stats-amount { font-size: 28px; }
-        }
+        .dw-btn:active { background: var(--card2); }
+        .dw-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .dw-btn.dep .dw-icon { background: #1a2e1a; }
+        .dw-btn.wd .dw-icon { background: #2e1a1a; }
+        .dw-label { font-weight: 700; font-size: 15px; }
+        .dw-btn.dep .dw-label { color: var(--green); }
+        .dw-btn.wd .dw-label { color: var(--red); }
+
+        /* Stats row */
+        .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
+        .stat-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 10px; text-align: center; }
+        .stat-val { font-size: 20px; font-weight: 900; color: var(--text); }
+        .stat-lbl { font-size: 10px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Period tabs */
+        .period-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px; scrollbar-width: none; }
+        .period-tabs::-webkit-scrollbar { display: none; }
+        .period-tab { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+        .period-tab.active { background: var(--accent); border-color: var(--accent); color: #0a0c12; font-weight: 700; }
+
+        /* Section header */
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .section-title { font-size: 16px; font-weight: 700; }
+        .section-link { font-size: 13px; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+
+        /* Transaction list */
+        .tx-list { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+        .tx-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+        .tx-item:last-child { border-bottom: none; }
+        .tx-icon-wrap { position: relative; flex-shrink: 0; }
+        .tx-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .tx-icon.dep-icon { background: #1a2e1a; }
+        .tx-icon.wd-icon { background: #2e1a1a; }
+        .tx-badge { position: absolute; top: -4px; right: -4px; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; }
+        .tx-info { flex: 1; min-width: 0; }
+        .tx-num { font-weight: 700; font-size: 15px; }
+        .tx-pid { font-size: 12px; color: var(--muted); margin-top: 2px; }
+        .tx-right { text-align: right; flex-shrink: 0; }
+        .tx-amount { font-weight: 700; font-size: 15px; }
+        .tx-amount.plus { color: var(--green); }
+        .tx-amount.minus { color: var(--red); }
+        .tx-time { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+        .empty-state svg { opacity: 0.3; margin-bottom: 12px; }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); display: flex; justify-content: space-around; align-items: stretch; padding: 8px 0 12px; border-top: 1px solid var(--border); z-index: 200; }
+        .bottom-nav .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; text-decoration: none; color: var(--muted); font-size: 10px; font-weight: 500; flex: 1; padding: 4px 0; }
+        .bottom-nav .nav-item.active { color: var(--accent); }
+        .nav-icon { display: flex; }
     </style>
 </head>
 <body>
+
 <div class="main">
-    <!-- Available to withdraw card -->
-    <div class="stats-card">
-        <div class="stats-label">Available to withdraw</div>
-        <div class="stats-amount" id="availableAmount">रु 0</div>
+    <!-- Balance -->
+    <div class="balance-card">
+        <div class="balance-label">My Balance</div>
+        <div class="balance-amount"><span>रु</span> <span id="balanceAmt">0</span></div>
     </div>
-    
-    <!-- Link Generation -->
-    <div class="link-card">
-        <div class="link-title">🔗 Link generation</div>
-        <input type="text" class="link-input" id="affLink" readonly value="https://1xpartners.com/aff/4101738">
-        <button class="btn" onclick="copyLink()">Copy link</button>
+
+    <!-- Deposit / Withdraw -->
+    <div class="dw-buttons">
+        <a href="depowd.html?tab=deposit" class="dw-btn dep">
+            <div class="dw-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="#2ecc71"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            </div>
+            <span class="dw-label">Deposit</span>
+        </a>
+        <a href="depowd.html?tab=withdraw" class="dw-btn wd">
+            <div class="dw-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="#e74c3c"><path d="M5 15h4v6h6v-6h4l-7-7-7 7zM5 4v2h14V4H5z"/></svg>
+            </div>
+            <span class="dw-label">Withdraw</span>
+        </a>
     </div>
-    
-    <!-- Brief summary -->
-    <div class="period-selector" id="periodSelector">
-        <button class="period-btn" data-period="today">Today</button>
-        <button class="period-btn" data-period="yesterday">Yesterday</button>
-        <button class="period-btn active" data-period="month">Current month</button>
-        <button class="period-btn" data-period="lastmonth">Last month</button>
-        <button class="period-btn" data-period="all">For all time</button>
+
+    <!-- Period selector -->
+    <div class="period-tabs" id="periodTabs">
+        <div class="period-tab" data-period="today">Today</div>
+        <div class="period-tab" data-period="yesterday">Yesterday</div>
+        <div class="period-tab active" data-period="month">This Month</div>
+        <div class="period-tab" data-period="lastmonth">Last Month</div>
+        <div class="period-tab" data-period="all">All Time</div>
     </div>
-    
-    <div class="summary-grid" id="summaryGrid">
-        <div class="summary-item"><div class="summary-icon">⭐</div><div class="summary-value" id="depositCount">0</div><div class="summary-label">Number of deposits</div></div>
-        <div class="summary-item"><div class="summary-icon">🛒</div><div class="summary-value" id="regCount">0</div><div class="summary-label">Registrations</div></div>
-        <div class="summary-item"><div class="summary-icon">↗</div><div class="summary-value" id="directCount">0</div><div class="summary-label">Direct links</div></div>
-        <div class="summary-item"><div class="summary-icon">💵</div><div class="summary-value" id="commissionAmount">रु 0</div><div class="summary-label">Commission</div></div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="stat-box"><div class="stat-val" id="statDeposits">0</div><div class="stat-lbl">Deposits</div></div>
+        <div class="stat-box"><div class="stat-val" id="statPlayers">0</div><div class="stat-lbl">Players</div></div>
+        <div class="stat-box"><div class="stat-val" id="statComm">रु0</div><div class="stat-lbl">Commission</div></div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="section-header">
+        <div class="section-title">Recent transactions</div>
+        <a href="depowd.html" class="section-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+        </a>
+    </div>
+    <div class="tx-list" id="txList">
+        <div class="empty-state">Loading...</div>
     </div>
 </div>
 
@@ -163,66 +165,101 @@
 <script src="nav.js"></script>
 <script>
     let currentPeriod = 'month';
-    
-    async function loadStats() {
-        await initDB();
-        const transactions = await getTransactions();
-        const deposits = transactions.filter(t => t.type === 'Deposit' && t.status === 'SUCCESS');
-        
+
+    function formatTxNum(txId) {
+        if (!txId) return '№...???';
+        return '№...' + txId.slice(-3);
+    }
+
+    function formatTime(iso) {
+        if (!iso) return '';
+        const d = new Date(iso);
+        const dd = String(d.getDate()).padStart(2,'0');
+        const mm = String(d.getMonth()+1).padStart(2,'0');
+        const yy = d.getFullYear();
+        const hh = String(d.getHours()).padStart(2,'0');
+        const min = String(d.getMinutes()).padStart(2,'0');
+        const ss = String(d.getSeconds()).padStart(2,'0');
+        return `${dd}.${mm}.${yy} / ${hh}:${min}:${ss}`;
+    }
+
+    function filterByPeriod(txs, period) {
         const now = new Date();
-        const todayStart = new Date(now.setHours(0,0,0,0));
-        const yesterdayStart = new Date(todayStart);
-        yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const yestStart = new Date(todayStart); yestStart.setDate(yestStart.getDate()-1);
         const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-        const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-        const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
-        
-        let filtered = [];
-        if (currentPeriod === 'today') filtered = deposits.filter(t => new Date(t.timestamp) >= todayStart);
-        else if (currentPeriod === 'yesterday') filtered = deposits.filter(t => {
-            const d = new Date(t.timestamp);
-            return d >= yesterdayStart && d < todayStart;
-        });
-        else if (currentPeriod === 'month') filtered = deposits.filter(t => new Date(t.timestamp) >= monthStart);
-        else if (currentPeriod === 'lastmonth') filtered = deposits.filter(t => {
-            const d = new Date(t.timestamp);
-            return d >= lastMonthStart && d <= lastMonthEnd;
-        });
-        else filtered = deposits;
-        
-        const totalAmount = filtered.reduce((s,t) => s + t.amount, 0);
+        const lastMonthStart = new Date(now.getFullYear(), now.getMonth()-1, 1);
+        const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+        if (period === 'today') return txs.filter(t => new Date(t.timestamp) >= todayStart);
+        if (period === 'yesterday') return txs.filter(t => { const d = new Date(t.timestamp); return d >= yestStart && d < todayStart; });
+        if (period === 'month') return txs.filter(t => new Date(t.timestamp) >= monthStart);
+        if (period === 'lastmonth') return txs.filter(t => { const d = new Date(t.timestamp); return d >= lastMonthStart && d <= lastMonthEnd; });
+        return txs;
+    }
+
+    async function loadDashboard() {
+        await initDB();
+        await generateDemoData();
+        const allTxs = await getTransactions();
+        const agents = await getAgents();
+        const myAgent = agents[0]; // first agent = admin partner
+        const myBalance = myAgent ? myAgent.balance : 0;
+        document.getElementById('balanceAmt').innerText = Math.round(myBalance).toLocaleString('en-IN');
+
+        const deposits = allTxs.filter(t => t.type === 'Deposit' && t.status === 'SUCCESS');
+        const filtered = filterByPeriod(deposits, currentPeriod);
+        const totalAmt = filtered.reduce((s,t) => s+t.amount, 0);
         const uniquePlayers = new Set(filtered.map(t => t.playerId)).size;
-        // For demo, direct links = unique players, commission = totalAmount * 0.3 (example)
-        const commission = totalAmount * 0.3;
-        
-        document.getElementById('availableAmount').innerText = formatCurrency(totalAmount);
-        document.getElementById('depositCount').innerText = filtered.length;
-        document.getElementById('regCount').innerText = uniquePlayers;
-        document.getElementById('directCount').innerText = uniquePlayers;
-        document.getElementById('commissionAmount').innerText = formatCurrency(commission);
+        const commission = totalAmt * 0.30;
+
+        document.getElementById('statDeposits').innerText = filtered.length;
+        document.getElementById('statPlayers').innerText = uniquePlayers;
+        document.getElementById('statComm').innerText = 'रु' + Math.round(commission).toLocaleString('en-IN');
+
+        // Recent 20 transactions
+        const recent = allTxs.slice(0, 20);
+        const txList = document.getElementById('txList');
+        if (!recent.length) {
+            txList.innerHTML = '<div class="empty-state"><svg width="48" height="48" viewBox="0 0 24 24" fill="#6b7094"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg><div>No transactions yet</div></div>';
+            return;
+        }
+        txList.innerHTML = recent.map(tx => {
+            const isDep = tx.type === 'Deposit';
+            return `<div class="tx-item">
+                <div class="tx-icon-wrap">
+                    <div class="tx-icon ${isDep ? 'dep-icon' : 'wd-icon'}">
+                        ${isDep
+                            ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="#2ecc71"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>`
+                            : `<svg width="22" height="22" viewBox="0 0 24 24" fill="#e74c3c"><path d="M5 15h4v6h6v-6h4l-7-7-7 7zM5 4v2h14V4H5z"/></svg>`}
+                    </div>
+                    <div class="tx-badge">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="#0a0c12"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+                    </div>
+                </div>
+                <div class="tx-info">
+                    <div class="tx-num">${formatTxNum(tx.txId)}</div>
+                    <div class="tx-pid">ID ${tx.playerId || '-'}</div>
+                </div>
+                <div class="tx-right">
+                    <div class="tx-amount ${isDep ? 'plus' : 'minus'}">${isDep ? '+' : '-'}${tx.amount.toFixed(2)} Re</div>
+                    <div class="tx-time">${formatTime(tx.timestamp)}</div>
+                </div>
+            </div>`;
+        }).join('');
     }
-    
-    function formatCurrency(amt) { return 'रु ' + Math.round(amt).toLocaleString('en-IN'); }
-    
-    function copyLink() {
-        const link = document.getElementById('affLink');
-        link.select();
-        document.execCommand('copy');
-        alert('Link copied!');
-    }
-    
-    // Period buttons
-    document.querySelectorAll('.period-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentPeriod = btn.dataset.period;
-            loadStats();
+
+    // Period tabs
+    document.querySelectorAll('.period-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentPeriod = tab.dataset.period;
+            loadDashboard();
         });
     });
-    
+
     requireAuth();
-    loadStats();
+    loadDashboard();
     initNav();
 </script>
 </body>
