@@ -12,8 +12,8 @@
 //   4. Paste both below:
 // =============================================================================
 
-const JSONBIN_BIN_ID  = 'YOUR_BIN_ID_HERE';   // ← paste your Bin ID
-const JSONBIN_API_KEY = 'YOUR_API_KEY_HERE';   // ← paste your API key
+const JSONBIN_BIN_ID  = '6a1aa139ddf5aa59f777b1af';
+const JSONBIN_API_KEY = '$2a$10$EHt3Fr5CcLyvbyx4LjpNmOLon9ONr3T3OyEf855I.7F2P5ps90swC'; // ← paste your API key
 
 const JSONBIN_URL     = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
 const JSONBIN_HEADERS = {
