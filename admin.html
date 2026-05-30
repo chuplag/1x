@@ -4,87 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Admin Panel - 1xPartners</title>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
-        :root { --bg:#0a0c12; --card:#121520; --border:#252a3a; --accent:#f5a623; --text:#e8eaf0; --muted:#9095aa; }
-        body { font-family:'Exo 2', sans-serif; background:var(--bg); color:var(--text); display:flex; min-height:100vh; }
-        .sidebar { width:260px; background:#121520; border-right:1px solid var(--border); padding:20px 0; }
-        .logo { padding:0 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px; font-size:22px; font-weight:800; color:var(--accent); }
-        .nav-item { display:flex; align-items:center; padding:12px 20px; color:var(--muted); text-decoration:none; gap:12px; transition:0.2s; }
-        .nav-item:hover { background:rgba(255,255,255,0.05); color:var(--text); }
-        .main-content { flex:1; padding:24px; overflow:auto; }
-        .card { background:var(--card); border-radius:16px; border:1px solid var(--border); padding:20px; margin-bottom:24px; }
-        .btn { background:var(--accent); border:none; padding:8px 20px; border-radius:8px; font-weight:600; cursor:pointer; margin-right:10px; }
-        table { width:100%; border-collapse:collapse; margin-top:16px; }
-        th, td { padding:12px; text-align:left; border-bottom:1px solid var(--border); }
-        .form-group { margin-bottom:16px; }
-        .form-label { display:block; margin-bottom:6px; font-size:12px; color:var(--muted); }
-        .form-input { width:100%; padding:10px; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:white; }
-        @media (max-width:768px) { .sidebar { display:none; } .main-content { padding:16px; } }
+        body { background: #0a0c12; font-family: 'Exo 2', sans-serif; color: #e8eaf0; padding: 20px; }
+        .admin-container { max-width: 1200px; margin: 0 auto; }
+        .admin-header { background: #121520; border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid #252a3a; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .btn { background: #f5a623; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; margin: 5px; }
+        .btn-outline { background: transparent; border: 1px solid #252a3a; color: #e8eaf0; }
+        .card { background: #121520; border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid #252a3a; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #252a3a; }
+        .form-group { margin-bottom: 15px; }
+        .form-input, .form-select { width: 100%; padding: 10px; background: #0a0c12; border: 1px solid #252a3a; border-radius: 8px; color: white; }
     </style>
 </head>
 <body>
-<div class="sidebar">
-    <div class="logo">1xPARTNERS ADMIN</div>
-    <a href="1xpartners-dashboard.html" class="nav-item">← Back to Dashboard</a>
-    <a href="#" onclick="logout()" class="nav-item">Logout</a>
-</div>
-<div class="main-content">
-    <h1>Admin Control Panel</h1>
-    <div class="card">
-        <h3>Agent Management</h3>
-        <button class="btn" onclick="location.reload()">Refresh Data</button>
-        <button class="btn" id="addAgentBtn">+ Add Agent</button>
-        <div id="agentsList"></div>
+<div class="admin-container">
+    <div class="admin-header">
+        <h2>🔐 Admin Control Panel</h2>
+        <div><button class="btn" onclick="location.href='1xpartners-dashboard.html'">← Back to Home</button><button class="btn btn-outline" onclick="logout()">Logout</button></div>
     </div>
-    <div class="card">
-        <h3>Adjust Agent Balance</h3>
-        <div class="form-group">
-            <label class="form-label">Select Agent</label>
-            <select id="balanceAgentId" class="form-input"></select>
-        </div>
-        <div class="form-group">
-            <label class="form-label">New Balance (NPR)</label>
-            <input type="number" id="newBalance" class="form-input" placeholder="Enter new balance">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Reason</label>
-            <input type="text" id="balanceReason" class="form-input" placeholder="e.g., Commission payment">
-        </div>
-        <button class="btn" id="adjustBalanceBtn">Update Balance</button>
-    </div>
+    <div class="card"><h3>Agent Management</h3><button class="btn" id="addAgentBtn">+ Add Agent</button><div id="agentsList"></div></div>
+    <div class="card"><h3>Adjust Agent Balance</h3><div class="form-group"><label>Agent</label><select id="balanceAgentId" class="form-select"></select></div><div class="form-group"><label>New Balance (NPR)</label><input type="number" id="newBalance" class="form-input"></div><div class="form-group"><label>Reason</label><input type="text" id="balanceReason" class="form-input"></div><button class="btn" id="adjustBalanceBtn">Update Balance</button></div>
 </div>
 <script src="data-manager.js"></script>
 <script>
     requireAuth();
-    const user = localStorage.getItem('1xpartners_user');
-    if (user !== 'knocker') { alert('Admin access only'); window.location='index.html'; }
-
+    if (localStorage.getItem('1xpartners_user') !== 'knocker') { alert('Admin only'); window.location='index.html'; }
     async function loadAgents() {
         const agents = await getAgents();
         const container = document.getElementById('agentsList');
-        container.innerHTML = `<table><tr><th>ID</th><th>Name</th><th>Email</th><th>Balance (NPR)</th></tr>` +
-            agents.map(a => `<tr><td>${a.id}</td><td>${a.name}</td><td>${a.email}</td><td>रु ${a.balance.toLocaleString('en-IN')}</td></tr>`).join('') + `</table>`;
+        container.innerHTML = `<table><th>ID</th><th>Name</th><th>Email</th><th>Balance</th></tr>` + agents.map(a => `<tr><td>${a.id}</td><td>${a.name}</td><td>${a.email}</td><td>रु ${a.balance.toLocaleString('en-IN')}</td></tr>`).join('') + `</table>`;
         const select = document.getElementById('balanceAgentId');
-        select.innerHTML = agents.map(a => `<option value="${a.id}">${a.name} (रु ${a.balance.toLocaleString('en-IN')})</option>`).join('');
+        select.innerHTML = agents.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
     }
-
-    document.getElementById('addAgentBtn').onclick = () => {
-        const name = prompt('Enter agent name');
-        const email = prompt('Enter agent email');
-        if (name && email) addAgent({ name, email, balance: 0 }).then(() => loadAgents());
+    document.getElementById('addAgentBtn').onclick = async () => {
+        const name = prompt('Name'); const email = prompt('Email');
+        if(name && email) { await addAgent({ name, email, balance:0 }); loadAgents(); }
     };
     document.getElementById('adjustBalanceBtn').onclick = async () => {
         const agentId = parseInt(document.getElementById('balanceAgentId').value);
         const newBalance = parseFloat(document.getElementById('newBalance').value);
         const reason = document.getElementById('balanceReason').value;
-        if (isNaN(newBalance) || !reason) return alert('Fill all fields');
-        await updateAgentBalance(agentId, newBalance, reason, 'Admin');
-        alert('Balance updated');
-        loadAgents();
+        if(isNaN(newBalance) || !reason) alert('Fill all');
+        else { await updateAgentBalance(agentId, newBalance, reason, 'Admin'); alert('Updated'); loadAgents(); }
     };
-    (async () => { await initDB(); await generateDemoData(); await loadAgents(); })();
+    (async()=>{ await initDB(); await generateDemoData(); await loadAgents(); })();
 </script>
 </body>
 </html>
