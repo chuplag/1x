@@ -1,33 +1,24 @@
 // =============================================================================
-// data-manager.js — JSONBin.io cloud sync
-// All data is stored in ONE JSONBin bin as a JSON object.
+// data-manager.js — JSONBin.io cloud sync with AUTO-SYNC
 // Any device that opens the app reads from the same bin automatically.
-//
-// SETUP (one-time, takes 2 minutes):
-//   1. Go to https://jsonbin.io  →  Sign up free
-//   2. Click "CREATE BIN"  →  paste this as initial content:
-//      {"transactions":[],"agents":[],"balanceLogs":[]}
-//      → Save  →  Copy the BIN ID from the URL  (looks like: 683abc12ad1234...)
-//   3. Go to API Keys  →  Create key  →  Copy it
-//   4. Paste both below:
+// Added: auto-sync every 30 seconds to pull latest changes from cloud.
 // =============================================================================
 
 const JSONBIN_BIN_ID  = '6a1aa139ddf5aa59f777b1af';
-const JSONBIN_API_KEY = '$2a$10$EHt3Fr5CcLyvbyx4LjpNmOLon9ONr3T3OyEf855I.7F2P5ps90swC'; // ← paste your API key
+const JSONBIN_API_KEY = '$2a$10$EHt3Fr5CcLyvbyx4LjpNmOLon9ONr3T3OyEf855I.7F2P5ps90swC';
 
 const JSONBIN_URL     = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
 const JSONBIN_HEADERS = {
     'Content-Type':  'application/json',
     'X-Master-Key':  JSONBIN_API_KEY,
-    'X-Bin-Versioning': 'false',   // always overwrite latest, no version history
+    'X-Bin-Versioning': 'false',
 };
 
 // ─── LOCAL CACHE ─────────────────────────────────────────────────────────────
-// We keep a local copy in memory so reads are instant after initial load.
-// Writes go to JSONBin immediately and update the cache.
 let _cache = null;          // { transactions:[], agents:[], balanceLogs:[] }
 let _syncing = false;
 let _pendingWrite = false;
+let _autoSyncTimer = null;   // NEW: timer for periodic cloud sync
 
 // ─── CLOUD READ ──────────────────────────────────────────────────────────────
 async function _cloudLoad() {
@@ -37,7 +28,6 @@ async function _cloudLoad() {
     if (!res.ok) throw new Error('JSONBin read failed: ' + res.status);
     const json = await res.json();
     _cache = json.record || { transactions: [], agents: [], balanceLogs: [] };
-    // Ensure all arrays exist
     _cache.transactions = _cache.transactions || [];
     _cache.agents       = _cache.agents       || [];
     _cache.balanceLogs  = _cache.balanceLogs  || [];
@@ -66,6 +56,35 @@ function _cloudSave() {
     }, 400);
 }
 
+// ─── AUTO-SYNC (pull latest from cloud every 30 seconds) ─────────────────────
+async function syncNow() {
+    if (_syncing) return false;
+    try {
+        await _cloudLoad();
+        // Trigger any UI refresh? Pages can listen to storage event or we can dispatch a custom event.
+        window.dispatchEvent(new CustomEvent('cloudsync', { detail: { success: true } }));
+        return true;
+    } catch(e) {
+        console.warn('Auto-sync failed:', e);
+        window.dispatchEvent(new CustomEvent('cloudsync', { detail: { success: false, error: e } }));
+        return false;
+    }
+}
+
+function startAutoSync(intervalSeconds = 30) {
+    if (_autoSyncTimer) clearInterval(_autoSyncTimer);
+    _autoSyncTimer = setInterval(() => {
+        syncNow().catch(console.warn);
+    }, intervalSeconds * 1000);
+}
+
+function stopAutoSync() {
+    if (_autoSyncTimer) {
+        clearInterval(_autoSyncTimer);
+        _autoSyncTimer = null;
+    }
+}
+
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 function _nextId(arr) {
     return arr.length ? Math.max(...arr.map(r => r.id || 0)) + 1 : 1;
@@ -92,22 +111,25 @@ function logout() {
     window.location.href = 'index.html';
 }
 
-// ─── DB INIT — loads data from JSONBin on first call ─────────────────────────
+// ─── DB INIT — loads data from JSONBin on first call and starts auto-sync ─────
 async function initDB() {
-    if (_cache) return true;   // already loaded this session
+    if (_cache) return true;
 
     // Check if credentials are still placeholders
     if (JSONBIN_BIN_ID === 'YOUR_BIN_ID_HERE' || JSONBIN_API_KEY === 'YOUR_API_KEY_HERE') {
         console.warn('JSONBin not configured — using localStorage fallback');
         _useLocalFallback();
+        startAutoSync(30); // still start sync (but it will do nothing)
         return true;
     }
 
     try {
         await _cloudLoad();
+        startAutoSync(30);   // NEW: start periodic sync
     } catch(e) {
         console.warn('JSONBin unreachable — using localStorage fallback:', e);
         _useLocalFallback();
+        startAutoSync(30);
     }
     return true;
 }
@@ -158,7 +180,7 @@ function updateAgentBalance(agentId, newBalance, reason, adminName = 'Admin') {
 function addTransaction(tx) {
     const newTx = { ...tx, id: _nextId(_cache.transactions), createdAt: new Date().toISOString() };
     _cache.transactions.push(newTx);
-    _cloudSave();
+    _cloudSave();   // pushes to cloud automatically
     return Promise.resolve(newTx.id);
 }
 
@@ -194,7 +216,7 @@ function getBalanceLogs(agentId = null) {
 
 // ─── DEMO DATA ────────────────────────────────────────────────────────────────
 async function generateDemoData() {
-    if (_cache.agents.length > 0) return;   // already seeded
+    if (_cache.agents.length > 0) return;
 
     const demoAgents = [
         { name: 'Prasanna Sharma', email: 'prasanna@1xpartners.com' },
@@ -249,7 +271,7 @@ async function generateDemoData() {
     _cloudSave();
 }
 
-// ─── MANUAL EXPORT / IMPORT (backup, still available) ─────────────────────────
+// ─── MANUAL EXPORT / IMPORT (backup) ─────────────────────────────────────────
 function exportData() {
     const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), ..._cache }, null, 2)], { type: 'application/json' });
     const url  = URL.createObjectURL(blob);
@@ -276,13 +298,6 @@ function importData(file) {
         reader.onerror = () => reject('File read error');
         reader.readAsText(file);
     });
-}
-
-// ─── FORCE REFRESH from cloud (call to pull latest from another device) ───────
-async function syncNow() {
-    if (JSONBIN_BIN_ID === 'YOUR_BIN_ID_HERE') return false;
-    try { await _cloudLoad(); return true; }
-    catch(e) { console.error('Sync failed:', e); return false; }
 }
 
 // ─── DASHBOARD STATS ─────────────────────────────────────────────────────────
