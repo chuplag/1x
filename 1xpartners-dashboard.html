@@ -78,6 +78,7 @@
         .bottom-nav .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; text-decoration: none; color: var(--muted); font-size: 10px; font-weight: 500; flex: 1; padding: 4px 0; }
         .bottom-nav .nav-item.active { color: var(--accent); }
         .nav-icon { display: flex; }
+
         .error-banner { background: rgba(231,76,60,0.15); border: 1px solid rgba(231,76,60,0.3); border-radius: 12px; padding: 12px; margin-bottom: 16px; text-align: center; font-size: 13px; color: #e74c3c; }
     </style>
 </head>
@@ -90,7 +91,7 @@
     <div class="main">
         <div class="balance-card">
             <div class="balance-label">MY BALANCE</div>
-            <div class="balance-amount"><span>₹</span> <span id="balanceAmt">0</span></div>
+            <div class="balance-amount"><span>रु</span> <span id="balanceAmt">0</span></div>
         </div>
 
         <div class="dw-buttons">
@@ -115,16 +116,14 @@
         <div class="stats-row">
             <div class="stat-box"><div class="stat-val" id="statDeposits">0</div><div class="stat-lbl">DEPOSITS</div></div>
             <div class="stat-box"><div class="stat-val" id="statPlayers">0</div><div class="stat-lbl">PLAYERS</div></div>
-            <div class="stat-box"><div class="stat-val" id="statComm">₹0</div><div class="stat-lbl">COMMISSION</div></div>
+            <div class="stat-box"><div class="stat-val" id="statComm">रु0</div><div class="stat-lbl">COMMISSION</div></div>
         </div>
 
         <div class="section-header">
             <div class="section-title">Recent transactions</div>
             <a href="depowd.html" class="section-link">→</a>
         </div>
-        <div class="tx-list" id="txList">
-            <div class="empty-state">Loading transactions...</div>
-        </div>
+        <div class="tx-list" id="txList"><div class="empty-state">Loading transactions...</div></div>
     </div>
 
     <nav class="bottom-nav">
@@ -136,34 +135,8 @@
 
     <script src="data-manager.js"></script>
     <script>
-        // Prevent multiple initializations
-        let isLoading = false;
         let currentPeriod = 'month';
-
-        // Helper: same as in data-manager.js
-        function isAuthenticated() {
-            const session = localStorage.getItem('1xpartners_session');
-            if (!session) return false;
-            try {
-                const [user, pass] = atob(session).split(':');
-                return (user === 'prasanna' && pass === 'root@knocker') || (user === 'knocker' && pass === 'root@knocker');
-            } catch(e) { return false; }
-        }
-
-        function requireAuth() {
-            if (!isAuthenticated()) {
-                window.location.href = 'index.html';
-                return false;
-            }
-            return true;
-        }
-
-        // Set user name in top bar
-        const loggedUser = localStorage.getItem('1xpartners_user');
-        if (loggedUser) document.getElementById('topUserName').innerText = loggedUser === 'knocker' ? 'Admin' : loggedUser;
-
-        // Check auth
-        if (!requireAuth()) return;
+        let isLoading = false;
 
         function formatTxNum(txId) { return txId ? '№...' + txId.slice(-3) : '№...???'; }
         function formatTime(iso) {
@@ -175,21 +148,14 @@
         function filterByPeriod(txs, period) {
             const now = new Date();
             const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const yestStart = new Date(todayStart);
-            yestStart.setDate(yestStart.getDate() - 1);
+            const yestStart = new Date(todayStart); yestStart.setDate(yestStart.getDate()-1);
             const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-            const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+            const lastMonthStart = new Date(now.getFullYear(), now.getMonth()-1, 1);
             const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
             if (period === 'today') return txs.filter(t => new Date(t.timestamp) >= todayStart);
-            if (period === 'yesterday') return txs.filter(t => {
-                const d = new Date(t.timestamp);
-                return d >= yestStart && d < todayStart;
-            });
+            if (period === 'yesterday') return txs.filter(t => { const d = new Date(t.timestamp); return d >= yestStart && d < todayStart; });
             if (period === 'month') return txs.filter(t => new Date(t.timestamp) >= monthStart);
-            if (period === 'lastmonth') return txs.filter(t => {
-                const d = new Date(t.timestamp);
-                return d >= lastMonthStart && d <= lastMonthEnd;
-            });
+            if (period === 'lastmonth') return txs.filter(t => { const d = new Date(t.timestamp); return d >= lastMonthStart && d <= lastMonthEnd; });
             return txs;
         }
 
@@ -197,15 +163,12 @@
             if (isLoading) return;
             isLoading = true;
             try {
-                // Show loading indicator
                 const txListDiv = document.getElementById('txList');
                 txListDiv.innerHTML = '<div class="empty-state">Loading data...</div>';
-
-                // Initialize DB (this also creates demo data if empty and loads from cloud)
+                
                 await initDB();
                 await generateDemoData();
-
-                // Get agents and transactions
+                
                 const agents = await getAgents();
                 const myAgent = agents && agents.length > 0 ? agents[0] : null;
                 if (myAgent) {
@@ -215,50 +178,40 @@
                 }
 
                 const allTxs = await getTransactions();
-                // Show recent 10 transactions (most recent first)
-                const recent = allTxs.slice(0, 10);
-                
+                const deposits = allTxs.filter(t => t.type === 'Deposit' && t.status === 'SUCCESS');
+                const filtered = filterByPeriod(deposits, currentPeriod);
+                const totalAmt = filtered.reduce((s,t) => s + t.amount, 0);
+                const uniquePlayers = new Set(filtered.map(t => t.playerId)).size;
+                document.getElementById('statDeposits').innerText = filtered.length;
+                document.getElementById('statPlayers').innerText = uniquePlayers;
+                document.getElementById('statComm').innerText = 'रु' + Math.round(totalAmt * 0.3).toLocaleString('en-IN');
+
+                // Show recent transactions (last 10, sorted by timestamp descending)
+                const recent = [...allTxs].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 15);
                 if (!recent.length) {
                     txListDiv.innerHTML = '<div class="empty-state">No transactions yet</div>';
                 } else {
-                    txListDiv.innerHTML = recent.map(tx => {
-                        const isDep = tx.type === 'Deposit';
-                        return `
-                            <div class="tx-item">
-                                <div class="tx-icon-wrap">
-                                    <div class="tx-icon ${isDep ? 'dep-icon' : 'wd-icon'}">
-                                        ${isDep 
-                                            ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="#2ecc71"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>'
-                                            : '<svg width="22" height="22" viewBox="0 0 24 24" fill="#e74c3c"><path d="M5 15h4v6h6v-6h4l-7-7-7 7zM5 4v2h14V4H5z"/></svg>'}
-                                    </div>
-                                    <div class="tx-badge">
-                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="#0a0c12"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-                                    </div>
+                    txListDiv.innerHTML = recent.map(tx => `
+                        <div class="tx-item">
+                            <div class="tx-icon-wrap">
+                                <div class="tx-icon ${tx.type === 'Deposit' ? 'dep-icon' : 'wd-icon'}">
+                                    ${tx.type === 'Deposit' 
+                                        ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="#2ecc71"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>'
+                                        : '<svg width="22" height="22" viewBox="0 0 24 24" fill="#e74c3c"><path d="M5 15h4v6h6v-6h4l-7-7-7 7zM5 4v2h14V4H5z"/></svg>'}
                                 </div>
-                                <div class="tx-info">
-                                    <div class="tx-num">${formatTxNum(tx.txId)}</div>
-                                    <div class="tx-pid">ID ${tx.playerId || '-'}</div>
-                                </div>
-                                <div class="tx-right">
-                                    <div class="tx-amount ${isDep ? 'plus' : 'minus'}">${isDep ? '+' : '-'}${tx.amount.toFixed(2)} Re</div>
-                                    <div class="tx-time">${formatTime(tx.timestamp)}</div>
-                                </div>
+                                <div class="tx-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0a0c12"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
                             </div>
-                        `;
-                    }).join('');
+                            <div class="tx-info">
+                                <div class="tx-num">${formatTxNum(tx.txId)}</div>
+                                <div class="tx-pid">ID ${tx.playerId || '-'}</div>
+                            </div>
+                            <div class="tx-right">
+                                <div class="tx-amount ${tx.type === 'Deposit' ? 'plus' : 'minus'}">${tx.type === 'Deposit' ? '+' : '-'}${tx.amount.toFixed(2)} Re</div>
+                                <div class="tx-time">${formatTime(tx.timestamp)}</div>
+                            </div>
+                        </div>
+                    `).join('');
                 }
-
-                // Update stats based on selected period
-                const deposits = allTxs.filter(t => t.type === 'Deposit' && t.status === 'SUCCESS');
-                const filtered = filterByPeriod(deposits, currentPeriod);
-                const totalAmt = filtered.reduce((s, t) => s + t.amount, 0);
-                const uniquePlayers = new Set(filtered.map(t => t.playerId)).size;
-                const commission = totalAmt * 0.3;
-                
-                document.getElementById('statDeposits').innerText = filtered.length;
-                document.getElementById('statPlayers').innerText = uniquePlayers;
-                document.getElementById('statComm').innerText = '₹' + Math.round(commission).toLocaleString('en-IN');
-                
             } catch (err) {
                 console.error('Dashboard error:', err);
                 const errorDiv = document.createElement('div');
@@ -271,7 +224,7 @@
             }
         }
 
-        // Period tabs event listeners
+        // Period tabs
         document.querySelectorAll('.period-tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
@@ -281,20 +234,18 @@
             });
         });
 
-        // Listen for cloud sync events (optional, but ensures refresh when data changes from another device)
-        window.addEventListener('cloudsync', () => {
-            console.log('Cloud sync event received, refreshing dashboard');
-            loadDashboard();
-        });
-
-        // Also refresh when page becomes visible again (e.g., coming back from finance page)
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
+        // Refresh when page becomes visible (e.g., coming back from deposit page)
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted || performance.getEntriesByType('navigation')[0].type === 'back_forward') {
                 loadDashboard();
             }
         });
 
-        // Initial load
+        // Set username
+        const loggedUser = localStorage.getItem('1xpartners_user');
+        if (loggedUser) document.getElementById('topUserName').innerText = loggedUser === 'knocker' ? 'Admin' : loggedUser;
+
+        requireAuth();
         loadDashboard();
     </script>
 </body>
