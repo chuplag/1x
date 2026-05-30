@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Admin Panel - 1xPartners</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root { --bg:#0a0c12; --card:#121520; --border:#252a3a; --accent:#f5a623; --text:#e8eaf0; --muted:#9095aa; }
+        body { font-family:'Exo 2', sans-serif; background:var(--bg); color:var(--text); display:flex; min-height:100vh; }
+        /* Sidebar same as dashboard */
+        .sidebar { width:260px; background:#121520; border-right:1px solid var(--border); padding:20px 0; }
+        .logo { padding:0 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px; font-size:22px; font-weight:800; color:var(--accent); }
+        .nav-item { display:flex; align-items:center; padding:12px 20px; color:var(--muted); text-decoration:none; gap:12px; transition:0.2s; }
+        .nav-item:hover { background:rgba(255,255,255,0.05); color:var(--text); }
+        .main-content { flex:1; padding:24px; overflow:auto; }
+        .card { background:var(--card); border-radius:16px; border:1px solid var(--border); padding:20px; margin-bottom:24px; }
+        .btn { background:var(--accent); border:none; padding:8px 20px; border-radius:8px; font-weight:600; cursor:pointer; }
+        table { width:100%; border-collapse:collapse; }
+        th, td { padding:12px; text-align:left; border-bottom:1px solid var(--border); }
+        @media (max-width:768px) { .sidebar { display:none; } .main-content { padding:16px; } }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <div class="logo">1xPARTNERS ADMIN</div>
+    <a href="1xpartners-dashboard.html" class="nav-item">← Back to Dashboard</a>
+    <a href="#" onclick="logout()" class="nav-item">Logout</a>
+</div>
+<div class="main-content">
+    <h1>Admin Control Panel</h1>
+    <div class="card">
+        <h3>Agent Management</h3>
+        <button class="btn" onclick="location.reload()">Refresh Data</button>
+        <div id="adminStats"></div>
+    </div>
+</div>
+<script src="data-manager.js"></script>
+<script>
+    requireAuth();
+    const user = localStorage.getItem('1xpartners_user');
+    if (user !== 'knocker') { alert('Admin access only'); window.location='index.html'; }
+    (async function() {
+        await initDB();
+        const agents = await getAgents();
+        document.getElementById('adminStats').innerHTML = `<p>Total Agents: ${agents.length}</p>`;
+    })();
+</script>
+</body>
+</html>
