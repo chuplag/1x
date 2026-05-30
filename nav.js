@@ -1,8 +1,5 @@
-// nav.js - handles responsive sidebar + hamburger menu
 function initNav() {
-    // Create sidebar structure dynamically (or we can embed HTML in each page)
-    // For simplicity, we'll inject the menu HTML via JS to keep code DRY.
-    // This function will be called on DOMContentLoaded.
+    if (document.querySelector('.sidebar')) return;
     const sidebarHTML = `
         <aside class="sidebar" id="mainSidebar">
             <div class="logo"><span>1x<em>PARTNERS</em></span></div>
@@ -16,38 +13,18 @@ function initNav() {
                 <a href="#" class="nav-item" onclick="logout(); return false;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</a>
             </div>
         </aside>
-        <div class="mobile-header">
-            <button class="hamburger" id="hamburgerBtn">☰</button>
-            <div class="mobile-logo">1xPARTNERS</div>
-            <div></div>
-        </div>
+        <div class="mobile-header"><button class="hamburger" id="hamburgerBtn">☰</button><div class="mobile-logo">1xPARTNERS</div><div></div></div>
         <div class="overlay" id="overlay"></div>
     `;
-
-    // Insert sidebar and mobile header into body (if not already present)
-    if (!document.querySelector('.sidebar')) {
-        document.body.insertAdjacentHTML('afterbegin', sidebarHTML);
+    document.body.insertAdjacentHTML('afterbegin', sidebarHTML);
+    const user = localStorage.getItem('1xpartners_user');
+    if (user !== 'knocker') {
+        const adminLink = document.getElementById('adminNavLink');
+        if (adminLink) adminLink.style.display = 'none';
     }
-
-    // Hide admin link if not admin
-    const sessionUser = localStorage.getItem('1xpartners_user');
-    const adminLink = document.getElementById('adminNavLink');
-    if (adminLink && sessionUser !== 'knocker') {
-        adminLink.style.display = 'none';
-    }
-
-    // Hamburger logic
     const hamburger = document.getElementById('hamburgerBtn');
     const sidebar = document.getElementById('mainSidebar');
     const overlay = document.getElementById('overlay');
-    if (hamburger && sidebar && overlay) {
-        hamburger.addEventListener('click', () => {
-            sidebar.classList.add('open');
-            overlay.classList.add('active');
-        });
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('active');
-        });
-    }
+    if (hamburger) hamburger.onclick = () => { sidebar.classList.add('open'); overlay.classList.add('active'); };
+    if (overlay) overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
 }
