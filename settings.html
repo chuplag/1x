@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Settings - 1xPartners</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background: #0a0c12; font-family: 'Exo 2', sans-serif; color: #e8eaf0; padding-bottom: 70px; }
+        .app-top-bar { background: #121520; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #252a3a; }
+        .user-name { font-weight: 700; font-size: 18px; color: #f5a623; }
+        .aff-id { font-size: 12px; color: #9095aa; margin-top: 4px; }
+        .main { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .settings-group { margin-bottom: 24px; }
+        .settings-title { color: #f5a623; font-size: 14px; margin-bottom: 12px; letter-spacing: 0.5px; }
+        .setting-item { background: #121520; border-radius: 12px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #252a3a; margin-bottom: 8px; }
+        .setting-label { font-weight: 500; }
+        .setting-status { color: #9095aa; font-size: 13px; }
+        .setting-status.enabled { color: #22c55e; }
+        .version { text-align: center; margin-top: 30px; color: #9095aa; font-size: 12px; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #121520; display: flex; justify-content: space-around; padding: 10px 0 16px; border-top: 1px solid #252a3a; }
+        .bottom-nav .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #9095aa; font-size: 11px; gap: 4px; }
+        .bottom-nav .nav-item.active { color: #f5a623; }
+        .nav-icon { font-size: 22px; }
+        .update-btn { background: #f5a623; border: none; padding: 10px; border-radius: 10px; width: 100%; margin-top: 16px; font-weight: 600; cursor: pointer; }
+    </style>
+</head>
+<body>
+<div class="main">
+    <div class="settings-group">
+        <div class="settings-title">Security</div>
+        <div class="setting-item"><span class="setting-label">Authenticator</span><span class="setting-status">Disabled</span></div>
+        <div class="setting-item"><span class="setting-label">PIN code and biometrics</span><span class="setting-status enabled">Enabled</span></div>
+    </div>
+    <div class="settings-group">
+        <div class="settings-title">App settings</div>
+        <div class="setting-item"><span class="setting-label">Push notifications</span><span class="setting-status">On</span></div>
+        <div class="setting-item"><span class="setting-label">Background</span><span class="setting-status">Dark</span></div>
+        <div class="setting-item"><span class="setting-label">Report settings</span><span class="setting-status">Default</span></div>
+        <div class="setting-item"><span class="setting-label">Marketing settings</span><span class="setting-status">Default</span></div>
+        <div class="setting-item"><span class="setting-label">Main page settings</span><span class="setting-status">Default</span></div>
+    </div>
+    <div class="version">App version: xbet-v32.0.210</div>
+    <button class="update-btn" onclick="alert('Demo: Update check')">Update</button>
+</div>
+<script src="data-manager.js"></script>
+<script src="nav.js"></script>
+<script>
+    requireAuth();
+    initNav();
+    document.querySelectorAll('.bottom-nav .nav-item')[3].classList.add('active');
+</script>
+</body>
+</html>
