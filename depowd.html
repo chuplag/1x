@@ -11,7 +11,6 @@
             --success:#22c55e; --danger:#ef4444; --text:#e8eaf0; --muted:#9098bb;
         }
         body { background:var(--bg); font-family:'Exo 2', sans-serif; color:var(--text); display:flex; min-height:100vh; position:relative; }
-        /* Sidebar + mobile (same as dashboard) */
         .sidebar { width:260px; flex-shrink:0; background:#13151f; border-right:1px solid var(--border); transition:transform 0.3s; z-index:1000; }
         .logo { padding:18px 20px; border-bottom:1px solid var(--border); font-size:22px; font-weight:800; color:var(--accent); }
         .logo span { color:white; }
@@ -47,51 +46,127 @@
         <div class="search-section">
             <h3>Manual Transaction Entry</h3>
             <div class="form-grid">
-                <input type="number" id="playerId" class="form-input" placeholder="Player ID">
-                <input type="number" id="amount" class="form-input" placeholder="Amount (NPR)">
-                <select id="type" class="form-select"><option>Deposit</option><option>Withdrawal</option></select>
-                <select id="method" class="form-select"><option>eSewa</option><option>Khalti</option><option>ConnectIPS</option><option>Bank Transfer</option></select>
+                <input type="number" id="playerId" class="form-input" placeholder="Player ID (e.g., 1621151391)" value="1621151391">
+                <input type="number" id="amount" class="form-input" placeholder="Amount (NPR)" value="1000">
+                <select id="type" class="form-select">
+                    <option value="Deposit">Deposit</option>
+                    <option value="Withdrawal">Withdrawal</option>
+                </select>
+                <select id="method" class="form-select">
+                    <option>eSewa</option>
+                    <option>Khalti</option>
+                    <option>ConnectIPS</option>
+                    <option>Bank Transfer</option>
+                </select>
                 <select id="agentId" class="form-select"></select>
             </div>
-            <button class="btn" onclick="addTransaction()">Record Transaction</button>
+            <button class="btn" id="recordBtn">Record Transaction</button>
         </div>
-        <div class="table-responsive"><table id="txTable"><thead><tr><th>Timestamp</th><th>Player ID</th><th>Amount</th><th>Type</th><th>Method</th><th>Agent</th></tr></thead><tbody id="txBody"></tbody></table></div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>Timestamp</th><th>Player ID</th><th>Amount</th><th>Type</th><th>Method</th><th>Agent</th></tr>
+                </thead>
+                <tbody id="txBody"></tbody>
+            </table>
+        </div>
     </div>
 </div>
+
 <script src="data-manager.js"></script>
 <script src="nav.js"></script>
 <script>
     requireAuth();
     let agents = [];
+
     async function loadData() {
-        await initDB(); await generateDemoData();
+        await initDB();
+        await generateDemoData();
         agents = await getAgents();
         const select = document.getElementById('agentId');
-        select.innerHTML = agents.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+        if (agents.length > 0) {
+            select.innerHTML = agents.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+            // Auto-select first agent (fixes "Fill all fields" issue)
+            select.value = agents[0].id;
+        } else {
+            select.innerHTML = '<option value="">No agents available</option>';
+        }
+
         const transactions = await getTransactions();
-        const deposits = transactions.filter(t=>t.type==='Deposit' && t.status==='SUCCESS');
-        const withdrawals = transactions.filter(t=>t.type==='Withdrawal' && t.status==='SUCCESS');
-        const totalDep = deposits.reduce((s,t)=>s+t.amount,0);
-        const totalWit = withdrawals.reduce((s,t)=>s+t.amount,0);
+        const deposits = transactions.filter(t => t.type === 'Deposit' && t.status === 'SUCCESS');
+        const withdrawals = transactions.filter(t => t.type === 'Withdrawal' && t.status === 'SUCCESS');
+        const totalDep = deposits.reduce((s, t) => s + t.amount, 0);
+        const totalWit = withdrawals.reduce((s, t) => s + t.amount, 0);
+
         document.getElementById('statsGrid').innerHTML = `
             <div class="stat-card"><div class="stat-value">रु ${totalDep.toLocaleString('en-IN')}</div><div>Total Deposits</div></div>
             <div class="stat-card"><div class="stat-value">रु ${totalWit.toLocaleString('en-IN')}</div><div>Total Withdrawals</div></div>
         `;
-        const agentMap = new Map(agents.map(a=>[a.id, a.name]));
-        document.getElementById('txBody').innerHTML = transactions.slice(0,50).map(tx => `
-            <tr><td>${new Date(tx.timestamp).toLocaleString()}</td><td>${tx.playerId}</td><td style="color:${tx.type==='Deposit'?'#22c55e':'#f5a623'}">रु ${tx.amount.toLocaleString('en-IN')}</td><td>${tx.type}</td><td>${tx.method}</td><td>${agentMap.get(tx.agentId)||'N/A'}</td></tr>
+
+        const agentMap = new Map(agents.map(a => [a.id, a.name]));
+        document.getElementById('txBody').innerHTML = transactions.slice(0, 50).map(tx => `
+            <tr>
+                <td>${new Date(tx.timestamp).toLocaleString()}</td>
+                <td>${tx.playerId}</td>
+                <td style="color:${tx.type === 'Deposit' ? '#22c55e' : '#f5a623'}">रु ${tx.amount.toLocaleString('en-IN')}</td>
+                <td>${tx.type}</td>
+                <td>${tx.method}</td>
+                <td>${agentMap.get(tx.agentId) || 'N/A'}</td>
+            </tr>
         `).join('');
     }
-    window.addTransaction = async function() {
-        const playerId = document.getElementById('playerId').value;
+
+    async function addTransactionHandler() {
+        const playerId = document.getElementById('playerId').value.trim();
         const amount = parseFloat(document.getElementById('amount').value);
         const type = document.getElementById('type').value;
         const method = document.getElementById('method').value;
         const agentId = parseInt(document.getElementById('agentId').value);
-        if (!playerId || !amount || !agentId) return alert('Fill all fields');
-        await addTransaction({ playerId, amount, type, method, agentId, status:'SUCCESS', timestamp:new Date().toISOString(), txId:'TX'+Math.random().toString(36).substring(2,10) });
-        loadData();
-    };
+
+        // Specific error messages
+        if (!playerId) {
+            alert('❌ Player ID is required');
+            return;
+        }
+        if (isNaN(amount) || amount <= 0) {
+            alert('❌ Please enter a valid amount (greater than 0)');
+            return;
+        }
+        if (amount > 70000) {
+            alert('❌ Amount cannot exceed 70,000 NPR');
+            return;
+        }
+        if (!agentId || isNaN(agentId)) {
+            alert('❌ Please select an agent');
+            return;
+        }
+
+        const txId = 'TX' + Math.random().toString(36).substring(2, 10).toUpperCase();
+        await addTransaction({
+            playerId,
+            amount,
+            type,
+            method,
+            agentId,
+            status: 'SUCCESS',
+            timestamp: new Date().toISOString(),
+            txId
+        });
+
+        alert(`✅ ${type} of रु ${amount.toLocaleString('en-IN')} recorded successfully!`);
+        
+        // Clear only amount field, keep player ID and agent as they are for convenience
+        document.getElementById('amount').value = '';
+        loadData(); // refresh table & stats
+    }
+
+    document.getElementById('recordBtn').addEventListener('click', addTransactionHandler);
+    
+    // Also allow Enter key on amount field
+    document.getElementById('amount').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') addTransactionHandler();
+    });
+
     loadData();
     initNav();
 </script>
