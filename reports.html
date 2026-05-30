@@ -4,43 +4,179 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Reports - 1xPartners</title>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background: #0a0c12; font-family: 'Exo 2', sans-serif; color: #e8eaf0; padding-bottom: 70px; }
-        .app-top-bar { background: #121520; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #252a3a; position: sticky; top: 0; }
-        .user-name { font-weight: 700; font-size: 18px; color: #f5a623; }
-        .aff-id { font-size: 12px; color: #9095aa; margin-top: 4px; }
-        .main { padding: 20px; max-width: 600px; margin: 0 auto; }
-        .menu-card { background: #121520; border-radius: 16px; border: 1px solid #252a3a; overflow: hidden; margin-bottom: 20px; }
-        .menu-item { display: flex; align-items: center; gap: 16px; padding: 16px 20px; border-bottom: 1px solid #252a3a; text-decoration: none; color: #e8eaf0; }
-        .menu-item:last-child { border-bottom: none; }
-        .menu-icon { font-size: 24px; }
-        .menu-label { font-weight: 500; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #121520; display: flex; justify-content: space-around; padding: 10px 0 16px; border-top: 1px solid #252a3a; }
-        .bottom-nav .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #9095aa; font-size: 11px; gap: 4px; }
-        .bottom-nav .nav-item.active { color: #f5a623; }
-        .nav-icon { font-size: 22px; }
+        :root { --bg:#13151f; --card:#1c1f2e; --card2:#22253a; --border:#2a2d3e; --accent:#f5a623; --green:#2ecc71; --red:#e74c3c; --text:#e8eaf0; --muted:#6b7094; --radius:14px; }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        body { background:var(--bg); font-family:'Roboto',sans-serif; color:var(--text); min-height:100vh; padding-top:60px; padding-bottom:80px; }
+
+        .app-top-bar { position:fixed; top:0; left:0; right:0; height:60px; background:var(--card); display:flex; align-items:center; justify-content:space-between; padding:0 16px; border-bottom:1px solid var(--border); z-index:200; }
+        .user-name { font-weight:700; font-size:16px; color:var(--accent); line-height:1.2; }
+        .aff-id { font-size:11px; color:var(--muted); }
+        .icon-btn { background:none; border:none; cursor:pointer; color:var(--muted); display:flex; padding:6px; }
+
+        .main { padding:16px; max-width:600px; margin:0 auto; }
+
+        /* Period tabs */
+        .period-tabs { display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; margin-bottom:16px; scrollbar-width:none; }
+        .period-tabs::-webkit-scrollbar { display:none; }
+        .period-tab { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-size:12px; font-weight:500; color:var(--muted); cursor:pointer; white-space:nowrap; flex-shrink:0; }
+        .period-tab.active { background:var(--accent); border-color:var(--accent); color:#0a0c12; font-weight:700; }
+
+        /* Big stat cards */
+        .big-stats { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
+        .big-stat { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:18px 16px; }
+        .big-stat-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+        .big-stat-val { font-size:26px; font-weight:900; color:var(--text); }
+        .big-stat-val.green { color:var(--green); }
+        .big-stat-val.red { color:var(--red); }
+        .big-stat-val.gold { color:var(--accent); }
+        .big-stat-sub { font-size:11px; color:var(--muted); margin-top:4px; }
+
+        /* Summary table style */
+        .summary-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-bottom:12px; }
+        .summary-card-header { padding:14px 16px; border-bottom:1px solid var(--border); font-weight:700; font-size:14px; display:flex; justify-content:space-between; align-items:center; }
+        .row-item { display:flex; justify-content:space-between; align-items:center; padding:13px 16px; border-bottom:1px solid var(--border); }
+        .row-item:last-child { border-bottom:none; }
+        .row-label { font-size:14px; color:var(--muted); }
+        .row-val { font-size:14px; font-weight:700; }
+
+        /* Agent table */
+        .agent-row { display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--border); }
+        .agent-row:last-child { border-bottom:none; }
+        .agent-avatar { width:40px; height:40px; border-radius:12px; background:rgba(245,166,35,0.12); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:16px; color:var(--accent); flex-shrink:0; }
+        .agent-name { font-weight:700; font-size:14px; }
+        .agent-meta { font-size:12px; color:var(--muted); margin-top:2px; }
+        .agent-balance { text-align:right; }
+        .agent-bal-val { font-weight:900; font-size:15px; color:var(--green); }
+
+        .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:var(--card); display:flex; justify-content:space-around; align-items:stretch; padding:8px 0 12px; border-top:1px solid var(--border); z-index:200; }
+        .bottom-nav .nav-item { display:flex; flex-direction:column; align-items:center; gap:3px; text-decoration:none; color:var(--muted); font-size:10px; font-weight:500; flex:1; padding:4px 0; }
+        .bottom-nav .nav-item.active { color:var(--accent); }
+        .nav-icon { display:flex; }
     </style>
 </head>
 <body>
 <div class="main">
-    <div class="menu-card">
-        <a href="#" class="menu-item"><span class="menu-icon">📋</span><span class="menu-label">Summary report</span></a>
-        <a href="#" class="menu-item"><span class="menu-icon">📄</span><span class="menu-label">Full report </span></a>
-        <a href="#" class="menu-item"><span class="menu-icon">📢</span><span class="menu-label">Marketing tools</span></a>
-        <a href="#" class="menu-item"><span class="menu-icon">👤</span><span class="menu-label">Player report</span></a>
-        <a href="#" class="menu-item"><span class="menu-icon">👥</span><span class="menu-label">Sub-affiliate report</span></a>
-        <a href="#" class="menu-item"><span class="menu-icon">💰</span><span class="menu-label">Payout history</span></a>
+    <!-- Period tabs -->
+    <div class="period-tabs" id="periodTabs">
+        <div class="period-tab" data-period="today">Today</div>
+        <div class="period-tab" data-period="yesterday">Yesterday</div>
+        <div class="period-tab active" data-period="month">This Month</div>
+        <div class="period-tab" data-period="lastmonth">Last Month</div>
+        <div class="period-tab" data-period="all">All Time</div>
+    </div>
+
+    <!-- Big stats -->
+    <div class="big-stats">
+        <div class="big-stat">
+            <div class="big-stat-label">Total Deposits</div>
+            <div class="big-stat-val green" id="rTotalDep">रु0</div>
+            <div class="big-stat-sub" id="rDepCount">0 transactions</div>
+        </div>
+        <div class="big-stat">
+            <div class="big-stat-label">Total Withdrawals</div>
+            <div class="big-stat-val red" id="rTotalWd">रु0</div>
+            <div class="big-stat-sub" id="rWdCount">0 transactions</div>
+        </div>
+        <div class="big-stat">
+            <div class="big-stat-label">Commission (30%)</div>
+            <div class="big-stat-val gold" id="rComm">रु0</div>
+            <div class="big-stat-sub">Estimated</div>
+        </div>
+        <div class="big-stat">
+            <div class="big-stat-label">Unique Players</div>
+            <div class="big-stat-val" id="rPlayers">0</div>
+            <div class="big-stat-sub">Active this period</div>
+        </div>
+    </div>
+
+    <!-- Summary breakdown -->
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <span>Summary</span>
+        </div>
+        <div class="row-item"><span class="row-label">Net flow</span><span class="row-val" id="rNet">रु0</span></div>
+        <div class="row-item"><span class="row-label">Avg deposit size</span><span class="row-val" id="rAvgDep">रु0</span></div>
+        <div class="row-item"><span class="row-label">Avg withdrawal size</span><span class="row-val" id="rAvgWd">रु0</span></div>
+        <div class="row-item"><span class="row-label">Success rate</span><span class="row-val" id="rSuccessRate">0%</span></div>
+    </div>
+
+    <!-- Agent breakdown -->
+    <div class="summary-card">
+        <div class="summary-card-header"><span>Agent Balances</span></div>
+        <div id="agentList"><div style="padding:20px;text-align:center;color:var(--muted)">Loading...</div></div>
     </div>
 </div>
+
 <script src="data-manager.js"></script>
 <script src="nav.js"></script>
 <script>
+    let period = 'month';
+
+    function filterByPeriod(txs, p) {
+        const now = new Date();
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const yestStart = new Date(todayStart); yestStart.setDate(yestStart.getDate()-1);
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastMonthStart = new Date(now.getFullYear(), now.getMonth()-1, 1);
+        const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23,59,59);
+        if (p === 'today') return txs.filter(t => new Date(t.timestamp) >= todayStart);
+        if (p === 'yesterday') return txs.filter(t => { const d = new Date(t.timestamp); return d >= yestStart && d < todayStart; });
+        if (p === 'month') return txs.filter(t => new Date(t.timestamp) >= monthStart);
+        if (p === 'lastmonth') return txs.filter(t => { const d = new Date(t.timestamp); return d >= lastMonthStart && d <= lastMonthEnd; });
+        return txs;
+    }
+
+    function fmt(n) { return 'रु' + Math.round(n).toLocaleString('en-IN'); }
+
+    async function loadReports() {
+        const txs = await getTransactions();
+        const agents = await getAgents();
+        const filtered = filterByPeriod(txs, period);
+        const deps = filtered.filter(t => t.type === 'Deposit' && t.status === 'SUCCESS');
+        const wds = filtered.filter(t => t.type === 'Withdrawal' && t.status === 'SUCCESS');
+        const totalDep = deps.reduce((s,t) => s+t.amount, 0);
+        const totalWd = wds.reduce((s,t) => s+t.amount, 0);
+        const players = new Set(filtered.map(t => t.playerId)).size;
+        const success = filtered.filter(t => t.status === 'SUCCESS').length;
+
+        document.getElementById('rTotalDep').innerText = fmt(totalDep);
+        document.getElementById('rDepCount').innerText = `${deps.length} transactions`;
+        document.getElementById('rTotalWd').innerText = fmt(totalWd);
+        document.getElementById('rWdCount').innerText = `${wds.length} transactions`;
+        document.getElementById('rComm').innerText = fmt(totalDep * 0.3);
+        document.getElementById('rPlayers').innerText = players;
+        document.getElementById('rNet').innerText = fmt(totalDep - totalWd);
+        document.getElementById('rAvgDep').innerText = deps.length ? fmt(totalDep / deps.length) : 'रु0';
+        document.getElementById('rAvgWd').innerText = wds.length ? fmt(totalWd / wds.length) : 'रु0';
+        document.getElementById('rSuccessRate').innerText = filtered.length ? Math.round(success/filtered.length*100) + '%' : '0%';
+
+        document.getElementById('agentList').innerHTML = agents.length ? agents.map(a => `
+            <div class="agent-row">
+                <div class="agent-avatar">${a.name[0].toUpperCase()}</div>
+                <div style="flex:1">
+                    <div class="agent-name">${a.name}</div>
+                    <div class="agent-meta">${a.email || ''}</div>
+                </div>
+                <div class="agent-balance">
+                    <div class="agent-bal-val">${fmt(a.balance)}</div>
+                </div>
+            </div>
+        `).join('') : '<div style="padding:20px;text-align:center;color:var(--muted)">No agents</div>';
+    }
+
+    document.querySelectorAll('.period-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            period = tab.dataset.period;
+            loadReports();
+        });
+    });
+
     requireAuth();
-    initNav();
-    // Set active nav
-    document.querySelectorAll('.bottom-nav .nav-item')[1].classList.add('active');
+    (async()=>{ await initDB(); await generateDemoData(); await loadReports(); initNav(); })();
 </script>
 </body>
 </html>
