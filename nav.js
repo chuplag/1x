@@ -1,30 +1,56 @@
+// nav.js - Unified Navigation with Bottom Tab Bar
 function initNav() {
-    if (document.querySelector('.sidebar')) return;
-    const sidebarHTML = `
-        <aside class="sidebar" id="mainSidebar">
-            <div class="logo"><span>1x<em>PARTNERS</em></span></div>
-            <div class="nav-section">
-                <div class="nav-label">Main Menu</div>
-                <a href="1xpartners-dashboard.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
-                <a href="admin.html" class="nav-item" id="adminNavLink"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Admin Panel</a>
-                <a href="depowd.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>Deposit</a>
-                <a href="depowd.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>Withdraw</a>
-                <a href="withdr.html" class="nav-item problem-link"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Withdrawal Problem</a>
-                <a href="#" class="nav-item" onclick="logout(); return false;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</a>
+    // Remove old sidebar if exists
+    const oldSidebar = document.querySelector('.sidebar');
+    if (oldSidebar) oldSidebar.remove();
+    const oldMobileHeader = document.querySelector('.mobile-header');
+    if (oldMobileHeader) oldMobileHeader.remove();
+    const oldOverlay = document.querySelector('.overlay');
+    if (oldOverlay) oldOverlay.remove();
+
+    // Get current user
+    const userName = localStorage.getItem('1xpartners_user') || 'Partner';
+    const affId = '4101738';
+
+    // Insert top bar
+    const topBarHTML = `
+        <div class="app-top-bar">
+            <div class="user-info">
+                <div class="user-name">${userName === 'knocker' ? 'Admin' : userName}</div>
+                <div class="aff-id">Aff ID: ${affId}</div>
             </div>
-        </aside>
-        <div class="mobile-header"><button class="hamburger" id="hamburgerBtn">☰</button><div class="mobile-logo">1xPARTNERS</div><div></div></div>
-        <div class="overlay" id="overlay"></div>
+            <div class="top-actions">
+                <button class="icon-btn" id="logoutTopBtn" onclick="logout()">🚪</button>
+            </div>
+        </div>
     `;
-    document.body.insertAdjacentHTML('afterbegin', sidebarHTML);
-    const user = localStorage.getItem('1xpartners_user');
-    if (user !== 'knocker') {
-        const adminLink = document.getElementById('adminNavLink');
-        if (adminLink) adminLink.style.display = 'none';
-    }
-    const hamburger = document.getElementById('hamburgerBtn');
-    const sidebar = document.getElementById('mainSidebar');
-    const overlay = document.getElementById('overlay');
-    if (hamburger) hamburger.onclick = () => { sidebar.classList.add('open'); overlay.classList.add('active'); };
-    if (overlay) overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
+    document.body.insertAdjacentHTML('afterbegin', topBarHTML);
+
+    // Insert bottom navigation
+    const currentPage = window.location.pathname.split('/').pop() || '1xpartners-dashboard.html';
+    const bottomNavHTML = `
+        <nav class="bottom-nav">
+            <a href="1xpartners-dashboard.html" class="nav-item ${currentPage === '1xpartners-dashboard.html' ? 'active' : ''}">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home page</span>
+            </a>
+            <a href="reports.html" class="nav-item ${currentPage === 'reports.html' ? 'active' : ''}">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Reports</span>
+            </a>
+            <a href="marketing.html" class="nav-item ${currentPage === 'marketing.html' ? 'active' : ''}">
+                <span class="nav-icon">📢</span>
+                <span class="nav-label">Marketing</span>
+            </a>
+            <a href="settings.html" class="nav-item ${currentPage === 'settings.html' ? 'active' : ''}">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
+            </a>
+        </nav>
+    `;
+    document.body.insertAdjacentHTML('beforeend', bottomNavHTML);
+
+    // Add padding to main content to avoid overlap with bottom nav
+    const mainContent = document.querySelector('.main, .main-content');
+    if (mainContent) mainContent.style.paddingBottom = '70px';
 }
