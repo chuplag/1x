@@ -4,11 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>1xPartners - Home</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg:#13151f; --card:#1c1f2e; --card2:#22253a; --border:#2a2d3e; --accent:#f5a623; --green:#2ecc71; --red:#e74c3c; --text:#e8eaf0; --muted:#6b7094; --radius:14px; }
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-        body { background:var(--bg); font-family:'Roboto',sans-serif; color:var(--text); min-height:100vh; padding-top:60px; padding-bottom:80px; }
+        body { background:var(--bg); font-family:'Exo 2',sans-serif; color:var(--text); min-height:100vh; padding-top:60px; padding-bottom:80px; }
+
+        /* Sync status banner */
+        .sync-banner { display:none; position:fixed; top:60px; left:0; right:0; z-index:150; background:#1a2e1a; border-bottom:1px solid rgba(46,204,113,0.3); color:#2ecc71; font-size:12px; font-weight:700; text-align:center; padding:7px; letter-spacing:0.5px; }
+        .sync-banner.error { background:#2e1a1a; border-color:rgba(231,76,60,0.3); color:#e74c3c; }
+        .sync-banner.show { display:block; }
+        @keyframes spin { to { transform:rotate(360deg); } }
         
         .app-top-bar { position:fixed; top:0; left:0; right:0; height:60px; background:var(--card); display:flex; align-items:center; justify-content:space-between; padding:0 16px; border-bottom:1px solid var(--border); z-index:200; }
         .user-name { font-weight:700; font-size:16px; color:var(--accent); line-height:1.2; }
@@ -37,7 +43,7 @@
             background: rgba(245,166,35,0.06);
         }
         .balance-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-        .balance-amount { font-size: 42px; font-weight: 900; color: var(--text); line-height: 1; margin-bottom: 4px; }
+        .balance-amount { font-family:'Rajdhani',sans-serif; font-size: 42px; font-weight: 900; color: var(--text); line-height: 1; margin-bottom: 4px; }
         .balance-amount span { color: var(--accent); }
         .balance-currency { font-size: 14px; color: var(--muted); }
 
@@ -109,6 +115,8 @@
     </style>
 </head>
 <body>
+
+<div class="sync-banner" id="syncBanner">⟳ Syncing with cloud...</div>
 
 <div class="main">
     <!-- Balance -->
@@ -198,8 +206,15 @@
     }
 
     async function loadDashboard() {
+        const banner = document.getElementById('syncBanner');
+        banner.className = 'sync-banner show';
+        banner.textContent = '⟳ Loading data from cloud...';
+
         await initDB();
         await generateDemoData();
+
+        banner.textContent = '✓ Synced';
+        setTimeout(() => banner.classList.remove('show'), 2000);
         const allTxs = await getTransactions();
         const agents = await getAgents();
         const myAgent = agents[0]; // first agent = admin partner
