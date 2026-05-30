@@ -107,14 +107,31 @@ async function getAgentById(id) {
     });
 }
 
-// ---------- TRANSACTIONS ----------
-async function addTransaction(txData) {
+// ---------- UPDATE & DELETE TRANSACTIONS ----------
+async function updateTransaction(id, updatedData) {
     const db = await initDB();
     return new Promise((resolve, reject) => {
         const tx = db.transaction('transactions', 'readwrite');
-        const record = { ...txData, timestamp: txData.timestamp || new Date().toISOString(), status: txData.status || 'SUCCESS' };
-        const request = tx.objectStore('transactions').add(record);
-        request.onsuccess = () => resolve(request.result);
+        const store = tx.objectStore('transactions');
+        const getRequest = store.get(id);
+        getRequest.onsuccess = () => {
+            const oldTx = getRequest.result;
+            if (!oldTx) return reject('Transaction not found');
+            const newTx = { ...oldTx, ...updatedData, updatedAt: new Date().toISOString() };
+            const putRequest = store.put(newTx);
+            putRequest.onsuccess = () => resolve(true);
+            putRequest.onerror = () => reject(putRequest.error);
+        };
+        getRequest.onerror = () => reject(getRequest.error);
+    });
+}
+
+async function deleteTransaction(id) {
+    const db = await initDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction('transactions', 'readwrite');
+        const request = tx.objectStore('transactions').delete(id);
+        request.onsuccess = () => resolve(true);
         request.onerror = () => reject(request.error);
     });
 }
