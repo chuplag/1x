@@ -1,4 +1,4 @@
-// data-manager.js - Centralized Data Service with Authentication Helpers
+// data-manager.js - Centralized Data Service withrs
 const DB_NAME = '1xPartnersDB';
 const DB_VERSION = 1;
 let dbInstance = null;
