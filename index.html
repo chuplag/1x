@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>1xPartners | Partner Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#13151f; --card:#1c1f2e; --card2:#22253a; --border:#2a2d3e;
+  --accent:#f5a623; --green:#2ecc71; --red:#e74c3c;
+  --text:#e8eaf0; --muted:#6b7094; --radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);font-family:'Exo 2',sans-serif;color:var(--text);min-height:100vh;}
+input,select,button,textarea{font-family:inherit;}
+
+/* ── LOGIN ───────────────────────────────────────────── */
+#loginScreen{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;padding:24px;
+}
+.brand{text-align:center;margin-bottom:40px;}
+.brand-logo{font-size:38px;font-weight:900;letter-spacing:1px;color:var(--text);}
+.brand-logo span{color:var(--accent);}
+.brand-sub{font-size:13px;color:var(--muted);margin-top:6px;letter-spacing:2px;text-transform:uppercase;}
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px 24px;width:100%;max-width:420px;}
+.login-title{font-size:20px;font-weight:700;margin-bottom:24px;}
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-size:11px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.form-input{width:100%;background:#0e1018;border:1px solid var(--border);border-radius:12px;padding:15px 16px;color:var(--text);font-size:16px;transition:border-color .2s;}
+.form-input:focus{outline:none;border-color:var(--accent);}
+.login-btn{width:100%;background:var(--accent);color:#0a0c12;border:none;border-radius:12px;padding:16px;font-weight:900;font-size:16px;letter-spacing:.5px;cursor:pointer;margin-top:8px;transition:opacity .15s;}
+.login-btn:active{opacity:.85;}
+.lock-circle{width:64px;height:64px;border-radius:50%;background:rgba(245,166,35,.1);border:2px solid rgba(245,166,35,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.error-msg{background:rgba(231,76,60,.12);border:1px solid rgba(231,76,60,.3);border-radius:10px;color:#e74c3c;font-size:13px;text-align:center;padding:12px;margin-top:16px;display:none;}
+
+/* ── APP SHELL ───────────────────────────────────────── */
+#appShell{display:none;}
+.app-top-bar{position:fixed;top:0;left:0;right:0;height:60px;background:var(--card);display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--border);z-index:200;}
+.user-name{font-weight:700;font-size:16px;color:var(--accent);line-height:1.2;}
+.aff-id{font-size:11px;color:var(--muted);}
+.icon-btn{background:none;border:none;cursor:pointer;color:var(--muted);display:flex;padding:6px;}
+
+.pages-wrap{padding-top:60px;padding-bottom:80px;}
+.page{display:none;}
+.page.active{display:block;}
+.main{padding:16px;max-width:600px;margin:0 auto;}
+
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);display:flex;justify-content:space-around;align-items:stretch;padding:8px 0 12px;border-top:1px solid var(--border);z-index:200;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:var(--muted);font-size:10px;font-weight:500;flex:1;padding:4px 0;cursor:pointer;border:none;background:none;}
+.nav-item.active{color:var(--accent);}
+.nav-icon{display:flex;}
+
+/* ── COMMON ─────────────────────────────────────────── */
+.period-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none;}
+.period-tabs::-webkit-scrollbar{display:none;}
+.period-tab{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.period-tab.active{background:var(--accent);border-color:var(--accent);color:#0a0c12;font-weight:700;}
+
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.section-title{font-size:16px;font-weight:700;}
+.section-link{font-size:13px;color:var(--accent);cursor:pointer;}
+
+/* TRANSACTION LIST */
+.tx-list{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.tx-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;}
+.tx-item:last-child{border-bottom:none;}
+.tx-item:active{background:var(--card2);}
+.tx-icon-wrap{position:relative;flex-shrink:0;}
+.tx-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;}
+.dep-icon{background:#1a2e1a;}
+.wd-icon{background:#2e1a1a;}
+.tx-badge{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.tx-badge.badge-success{background:var(--green);}
+.tx-badge.badge-pending{background:var(--accent);}
+.tx-badge.badge-failed{background:var(--red);}
+.tx-info{flex:1;min-width:0;}
+.tx-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;letter-spacing:.3px;}
+.tx-pid{font-size:12px;color:var(--muted);margin-top:2px;}
+.tx-right{text-align:right;flex-shrink:0;}
+.tx-amount{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;letter-spacing:.3px;}
+.tx-amount.plus{color:var(--green);}
+.tx-amount.minus{color:var(--red);}
+.tx-time{font-size:11px;color:var(--muted);margin-top:3px;}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;}
+.load-more-btn{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--muted);font-size:14px;cursor:pointer;margin-top:10px;}
+
+/* TOTAL CARDS (Finance header) */
+.total-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.total-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;}
+.tc-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.tc-label{font-size:13px;font-weight:600;color:var(--green);}
+.tc-label.red{color:var(--red);}
+.tc-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--green);}
+.tc-val.red{color:var(--red);}
+
+/* TYPE FILTER */
+.type-filter-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.type-filter-left{display:flex;align-items:center;gap:6px;cursor:pointer;}
+.type-filter-label{font-size:14px;color:var(--muted);}
+.type-filter-val{font-size:14px;color:#4a90e2;font-weight:600;}
+.download-btn{background:none;border:none;color:var(--muted);cursor:pointer;display:flex;padding:6px;}
+
+/* ── HOME PAGE ──────────────────────────────────────── */
+.balance-card{background:linear-gradient(135deg,#1c1f2e 0%,#22253a 100%);border:1px solid var(--border);border-radius:var(--radius);padding:24px 20px;margin-bottom:12px;text-align:center;}
+.balance-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+.balance-amount{font-family:'Rajdhani',sans-serif;font-size:42px;font-weight:700;color:var(--text);line-height:1;margin-bottom:4px;}
+.balance-amount span{color:var(--accent);}
+
+.dw-buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.dw-btn{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:background .15s;}
+.dw-btn:active{background:var(--card2);}
+.dw-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;}
+.dw-btn.dep .dw-icon{background:#1a2e1a;}
+.dw-btn.wd .dw-icon{background:#2e1a1a;}
+.dw-label{font-weight:700;font-size:15px;}
+.dw-btn.dep .dw-label{color:var(--green);}
+.dw-btn.wd .dw-label{color:var(--red);}
+
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center;}
+.stat-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--text);}
+.stat-lbl{font-size:10px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px;}
+
+/* ── FINANCE PAGE ──────────────────────────────────── */
+.tab-bar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.tab-btn{padding:18px 12px;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Exo 2',sans-serif;font-weight:800;font-size:17px;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;border:2px solid var(--border);border-radius:var(--radius);background:var(--card);color:var(--muted);transition:all .18s;}
+.tab-btn.active-dep{color:var(--green);background:rgba(46,204,113,.10);border-color:var(--green);box-shadow:0 0 18px rgba(46,204,113,.15);}
+.tab-btn.active-wd{color:var(--red);background:rgba(231,76,60,.10);border-color:var(--red);box-shadow:0 0 18px rgba(231,76,60,.15);}
+.panel{display:none;}
+.panel.active{display:block;}
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;}
+.form-card-title{font-size:14px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;}
+.form-select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 14px;color:var(--text);font-size:16px;font-family:inherit;transition:border-color .2s;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%236b7094'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px;}
+.form-select:focus{outline:none;border-color:var(--accent);}
+.amount-quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.quick-amt{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;}
+.quick-amt:active{border-color:var(--accent);}
+.submit-btn{width:100%;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:900;cursor:pointer;margin-top:4px;letter-spacing:.3px;transition:opacity .15s;}
+.submit-btn:active{opacity:.85;}
+.dep-btn{background:var(--green);color:#0a0c12;}
+.wd-btn{background:var(--red);color:#fff;}
+.search-row{display:flex;gap:8px;margin-bottom:12px;}
+.search-input{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;font-family:inherit;}
+.search-input:focus{outline:none;border-color:var(--accent);}
+.record-count{font-size:12px;color:var(--muted);}
+.balance-strip{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.balance-label-sm{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;}
+.balance-val{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--text);}
+.balance-val span{color:var(--accent);}
+
+/* ── REPORTS ─────────────────────────────────────────── */
+.big-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.big-stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;}
+.big-stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.big-stat-val{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:var(--text);}
+.big-stat-val.green{color:var(--green);}
+.big-stat-val.red{color:var(--red);}
+.big-stat-val.gold{color:var(--accent);}
+.big-stat-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+.summary-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
+.summary-card-header{padding:14px 16px;border-bottom:1px solid var(--border);font-weight:700;font-size:14px;}
+.row-item{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border);}
+.row-item:last-child{border-bottom:none;}
+.row-label{font-size:14px;color:var(--muted);}
+.row-val{font-size:14px;font-weight:700;}
+.agent-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);}
+.agent-row:last-child{border-bottom:none;}
+.agent-avatar{width:40px;height:40px;border-radius:12px;background:rgba(245,166,35,.12);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:var(--accent);flex-shrink:0;}
+.agent-name-r{font-weight:700;font-size:14px;}
+.agent-meta{font-size:12px;color:var(--muted);margin-top:2px;}
+.agent-bal-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:var(--green);}
+
+/* ── SETTINGS ─────────────────────────────────────────── */
+.profile-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px 20px;margin-bottom:16px;display:flex;align-items:center;gap:16px;}
+.profile-avatar{width:60px;height:60px;border-radius:16px;background:rgba(245,166,35,.12);border:2px solid rgba(245,166,35,.3);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:var(--accent);flex-shrink:0;}
+.profile-name{font-size:20px;font-weight:900;}
+.profile-role{font-size:12px;color:var(--accent);margin-top:3px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.profile-id{font-size:12px;color:var(--muted);margin-top:2px;}
+.link-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;}
+.link-card-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;font-weight:700;}
+.link-row{display:flex;align-items:center;gap:10px;}
+.link-val{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--accent);font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.copy-btn{background:var(--accent);color:#0a0c12;border:none;border-radius:10px;padding:12px 16px;font-weight:700;font-size:13px;cursor:pointer;}
+.settings-section{margin-bottom:20px;}
+.settings-section-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:8px;padding-left:4px;}
+.settings-group{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.setting-item{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;}
+.setting-item:last-child{border-bottom:none;}
+.setting-item:active{background:var(--card2);}
+.setting-left{display:flex;align-items:center;gap:12px;}
+.setting-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.si-blue{background:rgba(52,152,219,.15);}
+.si-green{background:rgba(46,204,113,.15);}
+.si-orange{background:rgba(245,166,35,.15);}
+.si-red{background:rgba(231,76,60,.15);}
+.si-purple{background:rgba(155,89,182,.15);}
+.setting-label{font-size:15px;font-weight:500;}
+.setting-value{font-size:13px;color:var(--muted);margin-top:1px;}
+.setting-right{display:flex;align-items:center;gap:8px;color:var(--muted);}
+.toggle{width:44px;height:24px;border-radius:12px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:var(--green);}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:white;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+.toggle.on::after{transform:translateX(20px);}
+.logout-btn{width:100%;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);color:var(--red);border-radius:var(--radius);padding:16px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;}
+.version-text{text-align:center;color:var(--muted);font-size:12px;margin-top:10px;}
+
+/* ── ADMIN PAGE ──────────────────────────────────────── */
+.admin-section-title{font-size:16px;font-weight:700;margin-bottom:12px;}
+.agent-table-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;}
+.agent-table-row{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);gap:12px;}
+.agent-table-row:last-child{border-bottom:none;}
+.agent-table-row.header{background:var(--card2);}
+.agent-col-name{flex:2;font-size:14px;}
+.agent-col-bal{flex:1;text-align:right;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--green);}
+.agent-col-action{flex-shrink:0;}
+.edit-agent-btn{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--accent);cursor:pointer;}
+.add-agent-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;}
+.balance-log-item{padding:12px 16px;border-bottom:1px solid var(--border);}
+.balance-log-item:last-child{border-bottom:none;}
+.bl-agent{font-weight:700;font-size:14px;}
+.bl-detail{font-size:12px;color:var(--muted);margin-top:3px;}
+
+/* ── MODAL ───────────────────────────────────────────── */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;align-items:flex-end;justify-content:center;}
+.modal.active{display:flex;}
+.modal-sheet{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:600px;padding:20px 20px 40px;max-height:90vh;overflow-y:auto;}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:20px;}
+.modal-form .form-group{margin-bottom:14px;}
+.modal-actions{display:flex;gap:10px;margin-top:16px;}
+.modal-btn{flex:1;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;}
+.modal-cancel{background:var(--card2);color:var(--text);}
+.modal-save{background:var(--accent);color:#0a0c12;}
+.modal-delete{background:rgba(231,76,60,.15);color:var(--red);border:1px solid rgba(231,76,60,.3);}
+
+/* TOAST */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:14px;font-weight:500;z-index:1000;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;}
+.toast.success{border-color:rgba(46,204,113,.4);color:var(--green);}
+.toast.error{border-color:rgba(231,76,60,.4);color:var(--red);}
+
+@keyframes spin{to{transform:rotate(360deg);}}
+.spinning{animation:spin 1s linear infinite;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="brand">
+    <div class="brand-logo">1x<span>Partners</span></div>
+    <div class="brand-sub">Partner Portal</div>
+  </div>
+  <div class="login-card">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div class="lock-circle"><svg width="28" height="28" viewBox="0 0 24 24" fill="#f5a623"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></div>
+    </div>
+    <div class="login-title">Admin Login</div>
+    <div class="form-group"><label class="form-label">Username</label><input type="text" id="loginUser" class="form-input" placeholder="Enter username" autocomplete="username"></div>
+    <div class="form-group"><label class="form-label">Password</label><input type="password" id="loginPass" class="form-input" placeholder="••••••••" autocomplete="current-password"></div>
+    <button class="login-btn" onclick="doLogin()">SIGN IN</button>
+    <div id="loginError" class="error-msg">❌ Invalid credentials. Access denied.</div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="appShell">
+  <div class="app-top-bar">
+    <div><div class="user-name" id="topUserName">Partner</div><div class="aff-id">Aff ID: 4101738</div></div>
+    <button class="icon-btn" onclick="logout()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+  </div>
+  <div class="pages-wrap">
+    <!-- HOME -->
+    <div class="page active" id="pageHome">
+      <div class="main">
+        <div class="balance-card"><div class="balance-label">MY BALANCE</div><div class="balance-amount"><span>रु</span> <span id="homeBalance">0</span></div></div>
+        <div class="dw-buttons">
+          <div class="dw-btn dep" onclick="goPage('pageFinance');switchFinanceTab('deposit')"><div class="dw-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="#2ecc71"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></div><span class="dw-label">Deposit</span></div>
+          <div class="dw-btn wd" onclick="goPage('pageFinance');switchFinanceTab('withdraw')"><div class="dw-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="#e74c3c"><path d="M5 15h4v6h6v-6h4l-7-7-7 7zM5 4v2h14V4H5z"/></svg></div><span class="dw-label">Withdraw</span></div>
+        </div>
+        <div class="period-tabs" id="homePeriodTabs">
+          <div class="period-tab" data-p="today">Today</div><div class="period-tab" data-p="yesterday">Yesterday</div>
+          <div class="period-tab active" data-p="month">This Month</div><div class="period-tab" data-p="lastmonth">Last Month</div><div class="period-tab" data-p="all">All Time</div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val" id="homeStatDep">0</div><div class="stat-lbl">Deposits</div></div>
+          <div class="stat-box"><div class="stat-val" id="homeStatPlayers">0</div><div class="stat-lbl">Players</div></div>
+          <div class="stat-box"><div class="stat-val" id="homeStatComm" style="font-size:16px">रु0</div><div class="stat-lbl">Commission</div></div>
+        </div>
+        <div class="section-header"><div class="section-title">Recent transactions</div><span class="section-link" onclick="goPage('pageFinance')" style="font-size:13px;color:#4a90e2;">All transactions</span></div>
+        <div class="tx-list" id="homeTxList"><div class="empty-state">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- FINANCE -->
+    <div class="page" id="pageFinance">
+      <div class="main">
+        <div class="total-cards">
+          <div class="total-card"><div class="tc-head"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2ecc71"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg><span class="tc-label">Total deposited</span></div><div class="tc-val" id="finTotalDep">Re 0</div></div>
+          <div class="total-card"><div class="tc-head"><svg width="18" height="18" viewBox="0 0 24 24" fill="#e74c3c"><path d="M5 15h4v6h6v-6h4l-7-7-7 7zM5 4v2h14V4H5z"/></svg><span class="tc-label red">Total withdrawn</span></div><div class="tc-val red" id="finTotalWd">Re 0</div></div>
+        </div>
+        <div class="type-filter-row"><div class="type-filter-left" onclick="cycleTypeFilter()"><span class="type-filter-label">Type:</span><span class="type-filter-val" id="finTypeLabel">All transactions</span><svg width="14" height="14" viewBox="0 0 24 24" fill="#4a90e2"><path d="M7 10l5 5 5-5z"/></svg></div><button class="download-btn" onclick="exportData()" title="Export"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></button></div>
+        <div class="tx-list" id="finTxList"><div class="empty-state">Loading...</div></div>
+        <button class="load-more-btn" id="finLoadMoreBtn" onclick="finLoadMore()" style="display:none">Load more</button>
+        <div style="height:24px;"></div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;"><button onclick="openAddTxModal()" style="flex:1;background:var(--accent);color:#0a0c12;border:none;border-radius:10px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;">＋ Add Transaction</button></div>
+        <div class="tab-bar"><button class="tab-btn active-dep" id="finTabDep" onclick="switchFinanceTab('deposit')"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> Deposit</button><button class="tab-btn" id="finTabWd" onclick="switchFinanceTab('withdraw')"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M5 15h4v6h6v-6h4l-7-7-7 7zM5 4v2h14V4H5z"/></svg> Withdraw</button></div>
+        <div class="panel active" id="finPanelDep">
+          <div class="balance-strip"><div><div class="balance-label-sm">My Balance</div><div class="balance-val"><span>रु</span> <span id="finBalanceDep">0</span></div></div><svg width="36" height="36" viewBox="0 0 24 24" fill="#f5a623" opacity=".4"><path d="M21 18v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1h-9a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9zm-9-2h10V8H12v8zm4-2.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg></div>
+          <div class="form-card"><div class="form-card-title">💳 Load My Balance</div><div class="form-group"><label class="form-label">Amount (NPR)</label><input type="number" id="myDepAmt" class="form-input" placeholder="Enter amount"><div class="amount-quick"><span class="quick-amt" onclick="qa('myDepAmt',500)">500</span><span class="quick-amt" onclick="qa('myDepAmt',1000)">1,000</span><span class="quick-amt" onclick="qa('myDepAmt',5000)">5,000</span><span class="quick-amt" onclick="qa('myDepAmt',10000)">10,000</span></div></div><div class="form-group"><label class="form-label">Method</label><select id="myDepMethod" class="form-select"><option>eSewa</option><option>Khalti</option><option>ConnectIPS</option><option>Bank Transfer</option></select></div><button class="submit-btn dep-btn" onclick="loadMyBalance()">＋ Load Balance</button></div>
+          <div class="form-card"><div class="form-card-title">🎯 Deposit to Player Account</div><div class="form-group"><label class="form-label">Player ID</label><input type="number" id="depPlayerId" class="form-input" placeholder="e.g. 1683792177"></div><div class="form-group"><label class="form-label">Amount (NPR)</label><input type="number" id="depAmt" class="form-input" placeholder="Enter amount"><div class="amount-quick"><span class="quick-amt" onclick="qa('depAmt',50)">50</span><span class="quick-amt" onclick="qa('depAmt',100)">100</span><span class="quick-amt" onclick="qa('depAmt',500)">500</span><span class="quick-amt" onclick="qa('depAmt',1000)">1,000</span></div></div><div class="form-group"><label class="form-label">Method</label><select id="depMethod" class="form-select"><option>eSewa</option><option>Khalti</option><option>ConnectIPS</option><option>Bank Transfer</option></select></div><div class="form-group"><label class="form-label">Agent</label><select id="depAgent" class="form-select"></select></div><button class="submit-btn dep-btn" onclick="recordPlayerDeposit()">✓ Record Deposit</button></div>
+        </div>
+        <div class="panel" id="finPanelWd">
+          <div class="balance-strip"><div><div class="balance-label-sm">My Balance</div><div class="balance-val"><span>रु</span> <span id="finBalanceWd">0</span></div></div><svg width="36" height="36" viewBox="0 0 24 24" fill="#f5a623" opacity=".4"><path d="M21 18v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1h-9a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9zm-9-2h10V8H12v8zm4-2.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg></div>
+          <div class="form-card"><div class="form-card-title">💸 Withdraw My Balance</div><div class="form-group"><label class="form-label">Amount (NPR)</label><input type="number" id="myWdAmt" class="form-input" placeholder="Enter amount"><div class="amount-quick"><span class="quick-amt" onclick="qa('myWdAmt',500)">500</span><span class="quick-amt" onclick="qa('myWdAmt',1000)">1,000</span><span class="quick-amt" onclick="qa('myWdAmt',5000)">5,000</span><span class="quick-amt" onclick="qa('myWdAmt',10000)">10,000</span></div></div><div class="form-group"><label class="form-label">Method</label><select id="myWdMethod" class="form-select"><option>eSewa</option><option>Khalti</option><option>ConnectIPS</option><option>Bank Transfer</option></select></div><button class="submit-btn wd-btn" onclick="withdrawMyBalance()">↑ Withdraw</button></div>
+          <div class="form-card"><div class="form-card-title">🎮 Withdraw from Player Account</div><div class="form-group"><label class="form-label">Player ID</label><input type="number" id="wdPlayerId" class="form-input" placeholder="e.g. 1683792177"></div><div class="form-group"><label class="form-label">Amount (NPR)</label><input type="number" id="wdAmt" class="form-input" placeholder="Enter amount"><div class="amount-quick"><span class="quick-amt" onclick="qa('wdAmt',1000)">1,000</span><span class="quick-amt" onclick="qa('wdAmt',5000)">5,000</span><span class="quick-amt" onclick="qa('wdAmt',10000)">10,000</span><span class="quick-amt" onclick="qa('wdAmt',20000)">20,000</span></div></div><div class="form-group"><label class="form-label">Method</label><select id="wdMethod" class="form-select"><option>eSewa</option><option>Khalti</option><option>ConnectIPS</option><option>Bank Transfer</option></select></div><div class="form-group"><label class="form-label">Agent</label><select id="wdAgent" class="form-select"></select></div><button class="submit-btn wd-btn" onclick="recordPlayerWithdraw()">✓ Record Withdrawal</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="page" id="pageReports">
+      <div class="main">
+        <div class="period-tabs" id="rptPeriodTabs">
+          <div class="period-tab" data-p="today">Today</div><div class="period-tab" data-p="yesterday">Yesterday</div>
+          <div class="period-tab active" data-p="month">This Month</div><div class="period-tab" data-p="lastmonth">Last Month</div><div class="period-tab" data-p="all">All Time</div>
+        </div>
+        <div class="big-stats">
+          <div class="big-stat"><div class="big-stat-label">Total Deposits</div><div class="big-stat-val green" id="rTotalDep">रु0</div><div class="big-stat-sub" id="rDepCount">0 transactions</div></div>
+          <div class="big-stat"><div class="big-stat-label">Total Withdrawals</div><div class="big-stat-val red" id="rTotalWd">रु0</div><div class="big-stat-sub" id="rWdCount">0 transactions</div></div>
+          <div class="big-stat"><div class="big-stat-label">Commission (5% Dep, 2% Wd)</div><div class="big-stat-val gold" id="rComm">रु0</div><div class="big-stat-sub">Estimated</div></div>
+          <div class="big-stat"><div class="big-stat-label">Unique Players</div><div class="big-stat-val" id="rPlayers">0</div><div class="big-stat-sub">Active this period</div></div>
+        </div>
+        <div class="summary-card"><div class="summary-card-header">Summary</div>
+          <div class="row-item"><span class="row-label">Net flow</span><span class="row-val" id="rNet">रु0</span></div>
+          <div class="row-item"><span class="row-label">Avg deposit size</span><span class="row-val" id="rAvgDep">रु0</span></div>
+          <div class="row-item"><span class="row-label">Avg withdrawal size</span><span class="row-val" id="rAvgWd">रु0</span></div>
+          <div class="row-item"><span class="row-label">Success rate</span><span class="row-val" id="rSuccessRate">0%</span></div>
+        </div>
+        <div class="summary-card"><div class="summary-card-header">Agent Balances</div><div id="rptAgentList"><div class="empty-state">Loading...</div></div></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="pageSettings">
+      <div class="main">
+        <div class="profile-card"><div class="profile-avatar" id="settingsAvatar">A</div><div><div class="profile-name" id="settingsName">Admin</div><div class="profile-role" id="settingsRole">👑 Administrator</div><div class="profile-id">Aff ID: 4101738</div></div></div>
+        <div class="link-card"><div class="link-card-label">My Affiliate Link</div><div class="link-row"><div class="link-val">https://1xpartners.com/aff/4101738</div><button class="copy-btn" onclick="copyAffLink()">Copy</button></div></div>
+        <div class="settings-section"><div class="settings-section-label">Security</div><div class="settings-group">
+          <div class="setting-item"><div class="setting-left"><div class="setting-icon si-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="#3498db"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></div><div><div class="setting-label">Authenticator</div><div class="setting-value">Two-factor authentication</div></div></div><div class="setting-right"><div class="toggle" onclick="this.classList.toggle('on')"></div></div></div>
+          <div class="setting-item"><div class="setting-left"><div class="setting-icon si-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2ecc71"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg></div><div><div class="setting-label">PIN & Biometrics</div><div class="setting-value">Enabled</div></div></div><div class="setting-right"><div class="toggle on" onclick="this.classList.toggle('on')"></div></div></div>
+        </div></div>
+        <div class="settings-section"><div class="settings-section-label">Notifications</div><div class="settings-group">
+          <div class="setting-item"><div class="setting-left"><div class="setting-icon si-orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="#f5a623"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></div><div><div class="setting-label">Push Notifications</div><div class="setting-value">Deposits & Withdrawals</div></div></div><div class="setting-right"><div class="toggle on" onclick="this.classList.toggle('on')"></div></div></div>
+        </div></div>
+        <div class="settings-section"><div class="settings-section-label">Data</div><div class="settings-group">
+          <div class="setting-item" onclick="doExport()"><div class="setting-left"><div class="setting-icon si-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="#3498db"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></div><div><div class="setting-label">Export Data</div><div class="setting-value">Download JSON backup</div></div></div><div class="setting-right" style="opacity:.4;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></div></div>
+          <label class="setting-item" style="display:flex;align-items:center;justify-content:space-between;padding:16px;cursor:pointer;"><div class="setting-left"><div class="setting-icon si-purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="#9b59b6"><path d="M5 15h4v6h6v-6h4l-7-7-7 7zM5 4v2h14V4H5z"/></svg></div><div><div class="setting-label">Import Data</div><div class="setting-value">Restore from JSON</div></div></div><div class="setting-right" style="opacity:.4;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></div><input type="file" accept=".json" style="display:none" onchange="handleImport(event)"></label>
+          <div class="setting-item" onclick="clearAllData()"><div class="setting-left"><div class="setting-icon si-red"><svg width="18" height="18" viewBox="0 0 24 24" fill="#e74c3c"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></div><div><div class="setting-label">Clear Demo Data</div><div class="setting-value">Reset all transactions</div></div></div><div class="setting-right" style="opacity:.4;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></div></div>
+        </div></div>
+        <div class="settings-section"><div class="settings-section-label">App</div><div class="settings-group">
+          <div class="setting-item"><div class="setting-left"><div class="setting-icon si-purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="#9b59b6"><path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm1 14h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div><div><div class="setting-label">App Version</div><div class="setting-value">xbet-v32.0.210</div></div></div><div class="setting-right"><span style="font-size:12px;color:var(--green);font-weight:700">Up to date</span></div></div>
+        </div></div>
+        <button class="logout-btn" onclick="logout()">Sign Out</button><div class="version-text">1xPartners Portal · Admin Edition</div>
+      </div>
+    </div>
+
+    <!-- ADMIN (visible only for knocker) -->
+    <div class="page" id="pageAdmin">
+      <div class="main">
+        <div class="admin-section-title">Agent Management</div>
+        <div class="agent-table-card" id="adminAgentTable"><div class="empty-state">Loading...</div></div>
+        <div class="add-agent-card"><div class="admin-section-title">Add Agent</div><div class="form-group"><label class="form-label">Name</label><input type="text" id="newAgentName" class="form-input" placeholder="Full name"></div><div class="form-group"><label class="form-label">Email</label><input type="email" id="newAgentEmail" class="form-input" placeholder="email@example.com"></div><div class="form-group"><label class="form-label">Initial Balance (NPR)</label><input type="number" id="newAgentBal" class="form-input" placeholder="0"></div><button class="submit-btn dep-btn" onclick="addNewAgent()">＋ Add Agent</button></div>
+        <div class="admin-section-title" style="margin-top:8px;">Balance Logs</div>
+        <div class="agent-table-card" id="adminBalanceLogs"><div class="empty-state">Loading...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-item active" data-nav="pageHome" onclick="goPage('pageHome')"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></span><span>Home</span></button>
+    <button class="nav-item" data-nav="pageFinance" onclick="goPage('pageFinance')"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M21 18v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1h-9a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9zm-9-2h10V8H12v8zm4-2.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg></span><span>Finance</span></button>
+    <button class="nav-item" data-nav="pageReports" onclick="goPage('pageReports')"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4zm2.5 2.1h-15V5h15v14.1zm0-16.1h-15C3.1 3 2 4.1 2 5.25V19a2 2 0 0 0 2 2h15a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg></span><span>Reports</span></button>
+    <button class="nav-item" data-nav="pageSettings" onclick="goPage('pageSettings')"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87a.48.48 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6a3.6 3.6 0 1 1 0-7.2 3.6 3.6 0 0 1 0 7.2z"/></svg></span><span>Settings</span></button>
+    <button class="nav-item" data-nav="pageAdmin" onclick="goPage('pageAdmin')" id="adminNavBtn" style="display:none"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg></span><span>Admin</span></button>
+  </nav>
+</div>
+
+<!-- MODALS -->
+<div class="modal" id="editTxModal">
+  <div class="modal-sheet"><div class="modal-handle"></div><div class="modal-title" id="editTxModalTitle">Edit Transaction</div>
+    <div class="modal-form">
+      <div class="form-group"><label class="form-label">Player ID</label><input type="text" id="ePlayerId" class="form-input" placeholder="Player ID"></div>
+      <div class="form-group"><label class="form-label">Amount (NPR)</label><input type="number" id="eAmount" class="form-input" placeholder="Amount"></div>
+      <div class="form-group"><label class="form-label">Type</label><select id="eType" class="form-select"><option value="Deposit">Deposit</option><option value="Withdrawal">Withdrawal</option></select></div>
+      <div class="form-group"><label class="form-label">Method</label><select id="eMethod" class="form-select"><option>eSewa</option><option>Khalti</option><option>ConnectIPS</option><option>Bank Transfer</option></select></div>
+      <div class="form-group"><label class="form-label">Status</label><select id="eStatus" class="form-select"><option value="SUCCESS">SUCCESS</option><option value="PENDING">PENDING</option><option value="FAILED">FAILED</option></select></div>
+      <div class="form-group"><label class="form-label">Timestamp</label><input type="datetime-local" id="eTimestamp" class="form-input"></div>
+      <div class="form-group" id="eFailedReasonGroup" style="display:none"><label class="form-label">Failed Reason</label><input type="text" id="eFailedReason" class="form-input" placeholder="e.g. Insufficient funds"></div>
+    </div>
+    <div class="modal-actions"><button class="modal-btn modal-cancel" onclick="closeEditModal()">Cancel</button><button class="modal-btn modal-delete" onclick="deleteTxFromModal()" id="editDeleteBtn">Delete</button><button class="modal-btn modal-save" onclick="saveEditTx()">Save</button></div>
+  </div>
+</div>
+<div class="modal" id="editAgentModal">
+  <div class="modal-sheet"><div class="modal-handle"></div><div class="modal-title">Adjust Agent Balance</div>
+    <div class="modal-form"><div class="form-group"><label class="form-label">Agent</label><div id="editAgentNameDisplay" style="font-size:16px;font-weight:700;padding:8px 0;color:var(--accent);"></div></div><div class="form-group"><label class="form-label">New Balance (NPR)</label><input type="number" id="editAgentBal" class="form-input" placeholder="New balance"></div><div class="form-group"><label class="form-label">Reason</label><input type="text" id="editAgentReason" class="form-input" placeholder="Reason for adjustment"></div></div>
+    <div class="modal-actions"><button class="modal-btn modal-cancel" onclick="closeAgentModal()">Cancel</button><button class="modal-btn modal-save" onclick="saveAgentBalance()">Update</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// DATA MANAGER (localStorage only)
+// ============================================================
+let _db = null;
+function _loadDB() { if(_db) return _db; try{_db=JSON.parse(localStorage.getItem('1xp_v2')||'null');}catch(e){_db=null;} if(!_db||!_db.agents) _db={agents:[],transactions:[],balanceLogs:[]}; return _db; }
+function _saveDB() { clearTimeout(_db._saveTimer); _db._saveTimer=setTimeout(()=>{ const {_saveTimer,...data}=_db; localStorage.setItem('1xp_v2',JSON.stringify(data)); },200); }
+function nextId(arr) { return arr.length ? Math.max(...arr.map(r=>r.id||0))+1 : 1; }
+
+function getAgents() { return [..._loadDB().agents]; }
+function getAgentById(id) { return _loadDB().agents.find(a=>a.id===id) || null; }
+function addAgent(a) { const db=_loadDB(); const ag={...a, id:nextId(db.agents), balance:a.balance||0, createdAt:new Date().toISOString()}; db.agents.push(ag); _saveDB(); return ag.id; }
+function updateAgentBalance(agentId,newBalance,reason,admin='Admin') { const db=_loadDB(); const idx=db.agents.findIndex(a=>a.id===agentId); if(idx===-1) return false; const oldBalance=db.agents[idx].balance; db.agents[idx].balance=newBalance; db.balanceLogs.push({id:nextId(db.balanceLogs), agentId, agentName:db.agents[idx].name, oldBalance, newBalance, adjustment:newBalance-oldBalance, reason, admin, timestamp:new Date().toISOString()}); _saveDB(); return true; }
+
+function getTransactions(filters={}) { let txs=[..._loadDB().transactions]; if(filters.type) txs=txs.filter(t=>t.type===filters.type); return txs.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)); }
+function generateTxId() { return 'TX' + Math.floor(Math.random() * 90000000 + 10000000).toString(); }
+
+function addTransaction(tx) { const db=_loadDB(); const t={...tx, id:nextId(db.transactions), createdAt:new Date().toISOString()}; if(!t.txId) t.txId=generateTxId(); db.transactions.push(t); _saveDB(); return t.id; }
+function updateTransaction(id,data) { const db=_loadDB(); const idx=db.transactions.findIndex(t=>t.id===id); if(idx===-1) return false; db.transactions[idx]={...db.transactions[idx],...data, updatedAt:new Date().toISOString()}; _saveDB(); return true; }
+function deleteTransaction(id) { const db=_loadDB(); db.transactions=db.transactions.filter(t=>t.id!==id); _saveDB(); return true; }
+function getBalanceLogs() { return [..._loadDB().balanceLogs].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)); }
+
+function exportData() { const db=_loadDB(); const blob=new Blob([JSON.stringify({exportedAt:new Date().toISOString(),...db},null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`1xpartners-${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url); }
+function doExport() { exportData(); }
+function handleImport(e) { const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=ev=>{ try{ const data=JSON.parse(ev.target.result); const db=_loadDB(); if(data.transactions) db.transactions=data.transactions; if(data.agents) db.agents=data.agents; if(data.balanceLogs) db.balanceLogs=data.balanceLogs; _saveDB(); showToast('✓ Data imported'); refreshAll(); } catch{ showToast('✗ Invalid file','error'); } }; r.readAsText(file); e.target.value=''; }
+
+function generateDemoData() {
+  const db=_loadDB(); if(db.agents.length>0) return;
+  const demoAgents=[{name:'Prasanna Sharma',email:'prasanna@1xpartners.com'},{name:'Ramesh Thapa',email:'ramesh@1xpartners.com'},{name:'Sita Gurung',email:'sita@1xpartners.com'},{name:'Hari Bahadur',email:'hari@1xpartners.com'},{name:'Gita Karki',email:'gita@1xpartners.com'}];
+  for(const a of demoAgents) addAgent(a);
+  const agents=_loadDB().agents;
+  const methods=['eSewa','Khalti','ConnectIPS','Bank Transfer'];
+  const statuses=['SUCCESS','SUCCESS','SUCCESS','SUCCESS','PENDING','PENDING','FAILED'];
+  const failedReasons=['Insufficient funds','Bank error','Verification failed','Timeout','Network error'];
+  const now=new Date();
+  const txBatch=[];
+  for(let day=0; day<30; day++){
+    const dayDate=new Date(now);
+    dayDate.setDate(dayDate.getDate()-day);
+    const count=(day===0)? 6+Math.floor(Math.random()*4) : 4+Math.floor(Math.random()*5);
+    for(let i=0;i<count;i++){
+      const agent=agents[Math.floor(Math.random()*agents.length)];
+      const type=Math.random()>0.28?'Deposit':'Withdrawal';
+      const amount=Math.round(200+Math.random()*69800);
+      const ts=new Date(dayDate);
+      ts.setHours(Math.floor(Math.random()*24),Math.floor(Math.random()*60),Math.floor(Math.random()*60),0);
+      const status=statuses[Math.floor(Math.random()*statuses.length)];
+      txBatch.push({id:txBatch.length+1, agentId:agent.id, playerId:String(Math.floor(1_000_000_000+Math.random()*9_000_000_000)), amount, type, method:methods[Math.floor(Math.random()*methods.length)], status, failedReason:status==='FAILED'?failedReasons[Math.floor(Math.random()*failedReasons.length)]:undefined, timestamp:ts.toISOString(), txId:generateTxId(), createdAt:ts.toISOString()});
+    }
+  }
+  db.transactions=txBatch;
+  const depTot={}, wdTot={};
+  txBatch.filter(t=>t.status==='SUCCESS').forEach(t=>{ if(t.type==='Deposit') depTot[t.agentId]=(depTot[t.agentId]||0)+t.amount; if(t.type==='Withdrawal') wdTot[t.agentId]=(wdTot[t.agentId]||0)+t.amount; });
+  db.agents=db.agents.map(a=>({...a, balance:Math.max(0,(depTot[a.id]||0)-(wdTot[a.id]||0))}));
+  _saveDB();
+}
+
+function clearAllData() { if(!confirm('Delete ALL data and regenerate demo data?')) return; const db=_loadDB(); db.agents=[]; db.transactions=[]; db.balanceLogs=[]; _saveDB(); _db={agents:[],transactions:[],balanceLogs:[]}; generateDemoData(); refreshAll(); showToast('✓ Data reset'); }
+
+// AUTH
+let _currentUser=null; let _myAgentId=null;
+function isAuth() { const s=localStorage.getItem('1xp_sess'); if(!s) return false; try{ const [u,p]=atob(s).split(':'); return (u==='knocker'||u==='prasanna') && p==='root@knocker'; }catch(e){ return false; } }
+function getCurrentUser() { const s=localStorage.getItem('1xp_sess'); if(!s) return null; try{ return atob(s).split(':')[0]; }catch(e){ return null; } }
+function doLogin() { const u=document.getElementById('loginUser').value.trim(); const p=document.getElementById('loginPass').value.trim(); if((u==='knocker'||u==='prasanna') && p==='root@knocker') { localStorage.setItem('1xp_sess',btoa(u+':'+p)); localStorage.setItem('1xp_user',u); startApp(u); } else { const err=document.getElementById('loginError'); err.style.display='block'; setTimeout(()=>err.style.display='none',3000); } }
+function logout() { localStorage.removeItem('1xp_sess'); localStorage.removeItem('1xp_user'); document.getElementById('appShell').style.display='none'; document.getElementById('loginScreen').style.display='flex'; _currentUser=null; }
+
+// NAV
+let _activePage='pageHome';
+function goPage(pageId) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(pageId).classList.add('active'); document.querySelectorAll('.nav-item').forEach(n=>{ n.classList.toggle('active',n.dataset.nav===pageId); }); _activePage=pageId; if(pageId==='pageHome') loadHome(); if(pageId==='pageFinance') loadFinance(); if(pageId==='pageReports') loadReports(); if(pageId==='pageAdmin') loadAdmin(); if(pageId==='pageSettings') loadSettings(); }
+function fmt(n) { return 'रु'+Math.round(n).toLocaleString('en-IN'); }
+function fmtRe(n) { return 'Re '+n.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtNum(txId) { return txId?'№...'+txId.slice(-3):'№...???'; }
+function fmtTime(iso) { if(!iso) return ''; const d=new Date(iso); return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()} / ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`; }
+function toLocalDatetimeInput(isoString) { const d=new Date(isoString); const year=d.getFullYear(); const month=String(d.getMonth()+1).padStart(2,'0'); const day=String(d.getDate()).padStart(2,'0'); const hours=String(d.getHours()).padStart(2,'0'); const minutes=String(d.getMinutes()).padStart(2,'0'); return `${year}-${month}-${day}T${hours}:${minutes}`; }
+function filterPeriod(txs,p) { const now=new Date(); const todayS=new Date(now.getFullYear(),now.getMonth(),now.getDate()); const yesterdayS=new Date(todayS); yesterdayS.setDate(yesterdayS.getDate()-1); const monthS=new Date(now.getFullYear(),now.getMonth(),1); const lastMonthS=new Date(now.getFullYear(),now.getMonth()-1,1); const lastMonthE=new Date(now.getFullYear(),now.getMonth(),0,23,59,59); if(p==='today') return txs.filter(t=>new Date(t.timestamp)>=todayS); if(p==='yesterday') return txs.filter(t=>{ const d=new Date(t.timestamp); return d>=yesterdayS && d<todayS; }); if(p==='month') return txs.filter(t=>new Date(t.timestamp)>=monthS); if(p==='lastmonth') return txs.filter(t=>{ const d=new Date(t.timestamp); return d>=lastMonthS && d<=lastMonthE; }); return txs; }
+function txItemHTML(tx,clickable=true){ const isDep=tx.type==='Deposit'; const badgeClass=tx.status==='SUCCESS'?'badge-success':tx.status==='PENDING'?'badge-pending':'badge-failed'; const badgeIcon=tx.status==='SUCCESS'?`<svg width="10" height="10" viewBox="0 0 24 24" fill="${isDep?'#0a0c12':'white'}"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`:tx.status==='PENDING'?`<svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>`:`<svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>`; return `<div class="tx-item" ${clickable?`onclick="openEditTx(${tx.id})"`:''}><div class="tx-icon-wrap"><div class="tx-icon ${isDep?'dep-icon':'wd-icon'}">${isDep?'<svg width="22" height="22" viewBox="0 0 24 24" fill="#2ecc71"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>':'<svg width="22" height="22" viewBox="0 0 24 24" fill="#e74c3c"><path d="M5 15h4v6h6v-6h4l-7-7-7 7zM5 4v2h14V4H5z"/></svg>'}</div><div class="tx-badge ${badgeClass}">${badgeIcon}</div></div><div class="tx-info"><div class="tx-num">${fmtNum(tx.txId)}</div><div class="tx-pid">ID ${tx.playerId||'-'}</div></div><div class="tx-right"><div class="tx-amount ${isDep?'plus':'minus'}">${isDep?'+':'-'}${fmtRe(tx.amount)}</div><div class="tx-time">${fmtTime(tx.timestamp)}</div></div></div>`; }
+
+// HOME
+let _homePeriod='month';
+function loadHome() { const agents=getAgents(); const myAgent=agents.find(a=>a.id===_myAgentId)||agents[0]; document.getElementById('homeBalance').innerText=myAgent?Math.round(myAgent.balance).toLocaleString('en-IN'):'0'; const allTxs=getTransactions(); const filtered=filterPeriod(allTxs,_homePeriod); const deps=filtered.filter(t=>t.type==='Deposit' && t.status==='SUCCESS'); const wds=filtered.filter(t=>t.type==='Withdrawal' && t.status==='SUCCESS'); const totalDepAmt=deps.reduce((s,t)=>s+t.amount,0); const totalWdAmt=wds.reduce((s,t)=>s+t.amount,0); const commission= (totalDepAmt*0.05) + (totalWdAmt*0.02); const uniquePlayers=new Set(filtered.map(t=>t.playerId)).size; document.getElementById('homeStatDep').innerText=deps.length; document.getElementById('homeStatPlayers').innerText=uniquePlayers; document.getElementById('homeStatComm').innerText=fmt(commission); const recent=allTxs.slice(0,15); document.getElementById('homeTxList').innerHTML=recent.length?recent.map(t=>txItemHTML(t,true)).join(''):'<div class="empty-state">No transactions yet</div>'; }
+document.getElementById('homePeriodTabs').addEventListener('click',e=>{ const tab=e.target.closest('.period-tab'); if(!tab) return; document.querySelectorAll('#homePeriodTabs .period-tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); _homePeriod=tab.dataset.p; loadHome(); });
+
+// FINANCE
+let _finAllTxs=[], _finTypeFilter='all', _finVisibleCount=30, _finTypeIdx=0; const _finTypeLabels=['All transactions','Deposits','Withdrawals']; const _finTypeKeys=['all','Deposit','Withdrawal'];
+function loadFinance() { _finAllTxs=getTransactions(); refreshFinBalance(); renderFinTxList(); updateFinTotals(); }
+function refreshFinBalance() { const agents=getAgents(); const myAgent=agents.find(a=>a.id===_myAgentId)||agents[0]; const bal=myAgent?Math.round(myAgent.balance).toLocaleString('en-IN'):'0'; document.getElementById('finBalanceDep').innerText=bal; document.getElementById('finBalanceWd').innerText=bal; const agentOptions=agents.map(a=>`<option value="${a.id}">${a.name}</option>`).join(''); document.getElementById('depAgent').innerHTML=agentOptions; document.getElementById('wdAgent').innerHTML=agentOptions; }
+function updateFinTotals() { const deps=_finAllTxs.filter(t=>t.type==='Deposit'&&t.status==='SUCCESS'); const wds=_finAllTxs.filter(t=>t.type==='Withdrawal'&&t.status==='SUCCESS'); document.getElementById('finTotalDep').innerText=fmtRe(deps.reduce((s,t)=>s+t.amount,0)); document.getElementById('finTotalWd').innerText=fmtRe(wds.reduce((s,t)=>s+t.amount,0)); }
+function cycleTypeFilter() { _finTypeIdx=(_finTypeIdx+1)%3; _finTypeFilter=_finTypeKeys[_finTypeIdx]; document.getElementById('finTypeLabel').innerText=_finTypeLabels[_finTypeIdx]; _finVisibleCount=30; renderFinTxList(); }
+function renderFinTxList() { let txs=_finAllTxs; if(_finTypeFilter!=='all') txs=txs.filter(t=>t.type===_finTypeFilter); const shown=txs.slice(0,_finVisibleCount); document.getElementById('finTxList').innerHTML=shown.length?shown.map(t=>txItemHTML(t,true)).join(''):'<div class="empty-state">No transactions found</div>'; document.getElementById('finLoadMoreBtn').style.display=txs.length>_finVisibleCount?'block':'none'; }
+function finLoadMore() { _finVisibleCount+=30; renderFinTxList(); }
+function switchFinanceTab(tab) { document.getElementById('finPanelDep').classList.toggle('active',tab==='deposit'); document.getElementById('finPanelWd').classList.toggle('active',tab==='withdraw'); document.getElementById('finTabDep').className='tab-btn'+(tab==='deposit'?' active-dep':''); document.getElementById('finTabWd').className='tab-btn'+(tab==='withdraw'?' active-wd':''); }
+function qa(id,val){ document.getElementById(id).value=val; }
+function loadMyBalance() { const amount=parseFloat(document.getElementById('myDepAmt').value); if(isNaN(amount)||amount<=0){ showToast('Enter a valid amount','error'); return; } const agents=getAgents(); const myAgent=agents.find(a=>a.id===_myAgentId)||agents[0]; if(!myAgent){ showToast('Agent not found','error'); return; } updateAgentBalance(myAgent.id,myAgent.balance+amount,'Self deposit'); document.getElementById('myDepAmt').value=''; refreshFinBalance(); loadHome(); showToast(`✓ रु ${Math.round(amount).toLocaleString('en-IN')} added`); }
+function withdrawMyBalance() { const amount=parseFloat(document.getElementById('myWdAmt').value); if(isNaN(amount)||amount<=0){ showToast('Enter a valid amount','error'); return; } const agents=getAgents(); const myAgent=agents.find(a=>a.id===_myAgentId)||agents[0]; if(!myAgent){ showToast('Agent not found','error'); return; } if(amount>myAgent.balance){ showToast('Insufficient balance','error'); return; } updateAgentBalance(myAgent.id,myAgent.balance-amount,'Self withdrawal'); document.getElementById('myWdAmt').value=''; refreshFinBalance(); loadHome(); showToast(`✓ रु ${Math.round(amount).toLocaleString('en-IN')} withdrawn`); }
+function recordPlayerDeposit() { const playerId=document.getElementById('depPlayerId').value.trim(); const amount=parseFloat(document.getElementById('depAmt').value); const method=document.getElementById('depMethod').value; const agentId=parseInt(document.getElementById('depAgent').value); if(!playerId||isNaN(amount)||amount<=0){ showToast('Fill Player ID and Amount','error'); return; } addTransaction({playerId,amount,type:'Deposit',method,agentId,status:'SUCCESS',timestamp:new Date().toISOString(),txId:generateTxId()}); document.getElementById('depAmt').value=''; document.getElementById('depPlayerId').value=''; _finAllTxs=getTransactions(); renderFinTxList(); updateFinTotals(); showToast(`✓ Deposit रु ${Math.round(amount).toLocaleString('en-IN')} recorded`); }
+function recordPlayerWithdraw() { const playerId=document.getElementById('wdPlayerId').value.trim(); const amount=parseFloat(document.getElementById('wdAmt').value); const method=document.getElementById('wdMethod').value; const agentId=parseInt(document.getElementById('wdAgent').value); if(!playerId||isNaN(amount)||amount<=0){ showToast('Fill Player ID and Amount','error'); return; } addTransaction({playerId,amount,type:'Withdrawal',method,agentId,status:'SUCCESS',timestamp:new Date().toISOString(),txId:generateTxId()}); document.getElementById('wdAmt').value=''; document.getElementById('wdPlayerId').value=''; _finAllTxs=getTransactions(); renderFinTxList(); updateFinTotals(); showToast(`✓ Withdrawal रु ${Math.round(amount).toLocaleString('en-IN')} recorded`); }
+
+// REPORTS
+let _rptPeriod='month';
+function loadReports() { const allTxs=getTransactions(); const filtered=filterPeriod(allTxs,_rptPeriod); const deps=filtered.filter(t=>t.type==='Deposit'&&t.status==='SUCCESS'); const wds=filtered.filter(t=>t.type==='Withdrawal'&&t.status==='SUCCESS'); const totalDep=deps.reduce((s,t)=>s+t.amount,0); const totalWd=wds.reduce((s,t)=>s+t.amount,0); const commission=(totalDep*0.05)+(totalWd*0.02); const players=new Set(filtered.map(t=>t.playerId)).size; const success=filtered.filter(t=>t.status==='SUCCESS').length; document.getElementById('rTotalDep').innerText=fmt(totalDep); document.getElementById('rDepCount').innerText=`${deps.length} transactions`; document.getElementById('rTotalWd').innerText=fmt(totalWd); document.getElementById('rWdCount').innerText=`${wds.length} transactions`; document.getElementById('rComm').innerText=fmt(commission); document.getElementById('rPlayers').innerText=players; document.getElementById('rNet').innerText=fmt(totalDep-totalWd); document.getElementById('rAvgDep').innerText=deps.length?fmt(totalDep/deps.length):'रु0'; document.getElementById('rAvgWd').innerText=wds.length?fmt(totalWd/wds.length):'रु0'; document.getElementById('rSuccessRate').innerText=filtered.length?Math.round(success/filtered.length*100)+'%':'0%'; const agents=getAgents(); document.getElementById('rptAgentList').innerHTML=agents.length?agents.map(a=>`<div class="agent-row"><div class="agent-avatar">${a.name[0].toUpperCase()}</div><div style="flex:1"><div class="agent-name-r">${a.name}</div><div class="agent-meta">${a.email||''}</div></div><div class="agent-bal-val">${fmt(a.balance)}</div></div>`).join(''):'<div class="empty-state">No agents</div>'; }
+document.getElementById('rptPeriodTabs').addEventListener('click',e=>{ const tab=e.target.closest('.period-tab'); if(!tab) return; document.querySelectorAll('#rptPeriodTabs .period-tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); _rptPeriod=tab.dataset.p; loadReports(); });
+
+// SETTINGS
+function loadSettings() { const u=_currentUser||'Admin'; const isAdmin=u==='knocker'; document.getElementById('settingsName').innerText=isAdmin?'Knocker (Admin)':u; document.getElementById('settingsAvatar').innerText=(isAdmin?'K':u[0]).toUpperCase(); document.getElementById('settingsRole').innerText=isAdmin?'👑 Administrator':'👤 Partner'; }
+function copyAffLink() { const link='https://1xpartners.com/aff/4101738'; if(navigator.clipboard) { navigator.clipboard.writeText(link).then(()=>showToast('✓ Link copied!')).catch(()=>fallbackCopy(link)); } else { fallbackCopy(link); } }
+function fallbackCopy(text){ const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('✓ Link copied!'); }
+
+// ADMIN
+let _editingAgentId=null;
+function loadAdmin() { const agents=getAgents(); document.getElementById('adminAgentTable').innerHTML=agents.length?agents.map(a=>`<div class="agent-table-row"><div class="agent-col-name"><div style="font-weight:700;font-size:14px;">${a.name}</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">${a.email||''}</div></div><div class="agent-col-bal">${fmt(a.balance)}</div><div class="agent-col-action"><button class="edit-agent-btn" onclick="openEditAgent(${a.id})">Edit</button></div></div>`).join(''):'<div class="empty-state">No agents</div>'; const logs=getBalanceLogs(); document.getElementById('adminBalanceLogs').innerHTML=logs.length?logs.slice(0,30).map(l=>`<div class="balance-log-item"><div class="bl-agent">${l.agentName}</div><div class="bl-detail"><span style="color:var(--muted);">${fmt(l.oldBalance)}</span><span style="color:var(--accent);margin:0 6px;">→</span><span style="color:var(--green);">${fmt(l.newBalance)}</span><span style="color:var(--muted);margin-left:8px;">(${l.adjustment>0?'+':''}${fmt(l.adjustment)})</span></div><div class="bl-detail" style="margin-top:3px;">${l.reason} · ${fmtTime(l.timestamp)}</div></div>`).join(''):'<div class="empty-state">No balance logs</div>'; }
+function openEditAgent(agentId){ const a=getAgentById(agentId); if(!a) return; _editingAgentId=agentId; document.getElementById('editAgentNameDisplay').innerText=a.name; document.getElementById('editAgentBal').value=a.balance; document.getElementById('editAgentReason').value=''; document.getElementById('editAgentModal').classList.add('active'); }
+function closeAgentModal(){ document.getElementById('editAgentModal').classList.remove('active'); _editingAgentId=null; }
+function saveAgentBalance(){ const newBal=parseFloat(document.getElementById('editAgentBal').value); const reason=document.getElementById('editAgentReason').value.trim(); if(isNaN(newBal)||!reason){ showToast('Fill balance and reason','error'); return; } updateAgentBalance(_editingAgentId,newBal,reason,_currentUser||'Admin'); closeAgentModal(); loadAdmin(); showToast('✓ Balance updated'); }
+function addNewAgent(){ const name=document.getElementById('newAgentName').value.trim(); const email=document.getElementById('newAgentEmail').value.trim(); const bal=parseFloat(document.getElementById('newAgentBal').value)||0; if(!name||!email){ showToast('Enter name and email','error'); return; } addAgent({name,email,balance:bal}); document.getElementById('newAgentName').value=''; document.getElementById('newAgentEmail').value=''; document.getElementById('newAgentBal').value=''; loadAdmin(); showToast('✓ Agent added'); }
+document.getElementById('editAgentModal').addEventListener('click',e=>{ if(e.target===document.getElementById('editAgentModal')) closeAgentModal(); });
+
+// EDIT TX MODAL
+let _editingTxId=null, _isAddMode=false;
+function openAddTxModal(){ _isAddMode=true; _editingTxId=null; document.getElementById('editTxModalTitle').innerText='Add Transaction'; document.getElementById('ePlayerId').value=''; document.getElementById('eAmount').value=''; document.getElementById('eType').value='Deposit'; document.getElementById('eMethod').value='eSewa'; document.getElementById('eStatus').value='SUCCESS'; document.getElementById('eTimestamp').value=toLocalDatetimeInput(new Date().toISOString()); document.getElementById('eFailedReason').value=''; document.getElementById('eFailedReasonGroup').style.display='none'; document.getElementById('editDeleteBtn').style.display='none'; document.getElementById('editTxModal').classList.add('active'); }
+function openEditTx(id){ const allTxs=getTransactions(); const tx=allTxs.find(t=>t.id===id); if(!tx) return; _isAddMode=false; _editingTxId=id; document.getElementById('editTxModalTitle').innerText='Edit Transaction'; document.getElementById('ePlayerId').value=tx.playerId||''; document.getElementById('eAmount').value=tx.amount; document.getElementById('eType').value=tx.type; document.getElementById('eMethod').value=tx.method||'eSewa'; document.getElementById('eStatus').value=tx.status; document.getElementById('eTimestamp').value=toLocalDatetimeInput(tx.timestamp); document.getElementById('eFailedReason').value=tx.failedReason||''; document.getElementById('eFailedReasonGroup').style.display=tx.status==='FAILED'?'block':'none'; document.getElementById('editDeleteBtn').style.display='flex'; document.getElementById('editTxModal').classList.add('active'); }
+document.getElementById('eStatus').addEventListener('change',function(){ document.getElementById('eFailedReasonGroup').style.display=this.value==='FAILED'?'block':'none'; });
+function closeEditModal(){ document.getElementById('editTxModal').classList.remove('active'); _editingTxId=null; }
+function saveEditTx(){ const playerId=document.getElementById('ePlayerId').value.trim(); const amount=parseFloat(document.getElementById('eAmount').value); if(!playerId||isNaN(amount)||amount<=0){ showToast('Fill Player ID and Amount','error'); return; } const data={ playerId, amount, type:document.getElementById('eType').value, method:document.getElementById('eMethod').value, status:document.getElementById('eStatus').value, timestamp:new Date(document.getElementById('eTimestamp').value).toISOString(), failedReason:document.getElementById('eStatus').value==='FAILED'?document.getElementById('eFailedReason').value:undefined }; if(_isAddMode){ data.txId=generateTxId(); data.agentId=_myAgentId||getAgents()[0]?.id; addTransaction(data); showToast('✓ Transaction added'); } else { updateTransaction(_editingTxId,data); showToast('✓ Transaction updated'); } closeEditModal(); _finAllTxs=getTransactions(); renderFinTxList(); updateFinTotals(); if(_activePage==='pageHome') loadHome(); }
+function deleteTxFromModal(){ if(!confirm('Delete this transaction?')) return; deleteTransaction(_editingTxId); closeEditModal(); _finAllTxs=getTransactions(); renderFinTxList(); updateFinTotals(); if(_activePage==='pageHome') loadHome(); showToast('✓ Transaction deleted'); }
+document.getElementById('editTxModal').addEventListener('click',e=>{ if(e.target===document.getElementById('editTxModal')) closeEditModal(); });
+
+function showToast(msg,type='success'){ const t=document.getElementById('toast'); t.textContent=msg; t.className=`toast show ${type}`; clearTimeout(t._timer); t._timer=setTimeout(()=>t.classList.remove('show'),3000); }
+function refreshAll(){ if(_activePage==='pageHome') loadHome(); if(_activePage==='pageFinance') loadFinance(); if(_activePage==='pageReports') loadReports(); if(_activePage==='pageAdmin') loadAdmin(); }
+
+function startApp(user){
+  _currentUser=user; _db=null; _loadDB(); generateDemoData();
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appShell').style.display='block';
+  document.getElementById('topUserName').innerText=user==='knocker'?'👑 Admin':user;
+  const adminBtn=document.getElementById('adminNavBtn');
+  if(user==='knocker') adminBtn.style.display='flex';
+  else adminBtn.style.display='none';
+  const agents=getAgents();
+  const myAgent=agents.find(a=>a.name.toLowerCase().includes(user.toLowerCase()))||agents[0];
+  _myAgentId=myAgent?myAgent.id:null;
+  goPage('pageHome');
+}
+if(isAuth()){ const u=getCurrentUser()||localStorage.getItem('1xp_user')||'prasanna'; startApp(u); } else { document.getElementById('loginScreen').style.display='flex'; document.getElementById('appShell').style.display='none'; }
+document.getElementById('loginPass').addEventListener('keypress',e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('loginUser').addEventListener('keypress',e=>{ if(e.key==='Enter') document.getElementById('loginPass').focus(); });
+</script>
+</body>
+</html>
